@@ -54,6 +54,7 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
+import { MessageBox } from 'element-ui'
 
 export default {
   name: 'Login',

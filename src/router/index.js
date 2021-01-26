@@ -46,31 +46,31 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/article',
     children: [{
-      path: 'dashboard',
+      path: 'article',
       name: '文章',
-      component: () => import('@/views/dashboard/index'),
+      component: () => import('@/views/article/index'),
       meta: { title: '文章', icon: 'dashboard' }
     }]
   },
 
   {
-    path: '/settings',
+    path: '/configuration',
     component: Layout,
-    redirect: '/settings',
+    redirect: '/configuration',
     name: '设置',
     meta: { title: '设置', icon: 'el-icon-s-help' },
     children: [{
-      path: 'settings/target',
+      path: 'configuration/target',
       name: '设置',
-      component: () => import('@/views/settings/target/index'),
+      component: () => import('@/views/configuration/target/index'),
       meta: { title: '目标设置', icon: 'dashboard' }
     },
     {
-      path: 'settings/keyword',
+      path: 'configuration/keyword',
       name: '设置',
-      component: () => import('@/views/settings/keyword/index'),
+      component: () => import('@/views/configuration/keyword/index'),
       meta: { title: '关键字设置', icon: 'dashboard' }
     }
 
@@ -78,62 +78,16 @@ export const constantRoutes = [
   },
 
   {
-    path: '/',
+    path: '/monitor',
     component: Layout,
-    redirect: '/test',
+    redirect: '/monitor',
     children: [{
-      path: 'test',
-      name: 'test',
-      component: () => import('@/views/test/index'),
-      meta: { title: 'test', icon: 'dashboard' }
+      path: 'monitor',
+      name: '统计信息',
+      component: () => import('@/views/monitor/index'),
+      meta: { title: '统计信息', icon: 'dashboard' }
     }]
   },
-
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'el-icon-s-help' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
-      }
-    ]
-  },
-
-  {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
-      }
-    ]
-  },
-
-  // {
-  //   path: 'external-link',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-  //       meta: { title: 'External Link', icon: 'link' }
-  //     }
-  //   ]
-  // },
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
