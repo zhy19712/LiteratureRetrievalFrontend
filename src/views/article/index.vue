@@ -64,9 +64,6 @@ export default {
         console.log(this.dataGet)
       })
     },
-    showIndexData(item,index){
-      //点击按钮展示
-      // 对象一定不相同
       
       this.global_index = index;
       var tagIn = {name:item.title, tagIndex:index};
