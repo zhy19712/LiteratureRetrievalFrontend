@@ -59,21 +59,22 @@ export const constantRoutes = [
     path: '/configuration',
     component: Layout,
     redirect: '/configuration',
-    name: '设置',
     meta: { title: '设置', icon: 'el-icon-s-help' },
     children: [{
       path: 'configuration/target',
-      name: '设置',
       component: () => import('@/views/configuration/target/index'),
       meta: { title: '目标设置', icon: 'dashboard' }
     },
     {
       path: 'configuration/keyword',
-      name: '设置',
       component: () => import('@/views/configuration/keyword/index'),
       meta: { title: '关键字设置', icon: 'dashboard' }
+    },
+    {
+      path: 'configuration/crawler',
+      component: () => import('@/views/configuration/crawler/index'),
+      meta: { title: '爬虫设置', icon: 'dashboard' }
     }
-
     ]
   },
 
