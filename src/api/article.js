@@ -1,8 +1,16 @@
 import request from '@/utils/request'
 
-export function fetchTarget() {
+export function getCenters() {
   return request({
-    url: '/article',
+    url: '/center',
     method: 'get'
+  })
+}
+
+export function getKeywordTree(data) {
+  return request({
+    url:'/keywordtree',
+    method: 'post',
+    data
   })
 }

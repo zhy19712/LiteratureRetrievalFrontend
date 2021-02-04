@@ -4,13 +4,12 @@
       <el-col :span="16" :offset=4> -->
         <!-- 显示各个中心 -->
     <el-row :gutter="20">
-      <el-col el-col :span="20"  style="width:95% ;text-align:left">
-        <el-button type="primary" v-for="(item, index) in centers" :key="'Center' + index"  size="small" @click="centerClick(item.id)">{{ item.center }}</el-button>
-        <br><br>
+      <el-col el-col :span="20"  v-for="(item, index) in centers" :key="'Center' + index" style="width:95% ;text-align:left">
+        <el-button type="primary" size="small">{{ item.center }}</el-button>
       </el-col>
     </el-row>
 
-  <el-container style="height:550px; width:95%; border:1px solid #eee">
+    <el-container style="height:550px; width:95%; border:1px solid #eee">
       <!-- 边-显示来源（menu） -->
       <el-aside width="300px"  style=" border:1px">
         <el-tree :data="menuData" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
@@ -61,9 +60,9 @@
           <!-- 正文显示-- -->
         <el-main>
           <el-container v-if="dataGet">
-            <el-header class="header" :gutter="20" style="text-align:left; font-size: 12px; margin-bottom: 10px; border: 1px solid">Title:title</el-header>
+            <el-header class="header" :gutter="20" style="text-align:left; font-size: 12px; margin-bottom: 10px; border: 1px solid">Title:{{dataGet[global_index].title}}</el-header>
             <!-- <el-footer class="url" :gutter="20" style="text-align:left; font-size: 12px; margin-bottom: 10px; border: 1px solid">URL: {{dataGet[global_index].url}}</el-footer> -->
-            <el-main class="text" style="text-align:left; font-size: 12px; margin-bottom: 10px; border: 1px solid">text</el-main>
+            <el-main class="text" style="text-align:left; font-size: 12px; margin-bottom: 10px; border: 1px solid">{{dataGet[global_index].text}}</el-main>
           </el-container>
         </el-main>
         </el-container>
@@ -107,16 +106,9 @@ export default {
     async getTarget() {
       await getCenters().then(response => {
         this.centers = response.data;
-        //console.log(this.centers);
+        console.log(this.centers[0].center);
       });
     },
-
-    centerClick(centerId){
-      console.log(centerId)
-      getKeywordTree({"center_id":centerId}).then(response => {
-        this.menuData = response.data;
-        console.log(this.menuData)})
-    }, 
 
     handleRowClick(row, column, cell, event){
       console.log(row);
@@ -142,8 +134,8 @@ export default {
 
     //侧边栏点击事件
     handleNodeClick(data) {
-      console.log(data);
       this.tableData = data.object;
+      console.log(this.tableData);
       },
     
     //分页tabs事件处理
