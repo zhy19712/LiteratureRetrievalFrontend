@@ -23,7 +23,7 @@
           <el-table-column prop='source' label="来源" width="100px"></el-table-column>
           <el-table-column label="打开" width="100px">
             <template slot-scope="scope">
-              <el-button type="primary" icon="el-icon-share" @click="dialogVisible = true , textDialog=scope.row.text"></el-button>
+              <el-button type="primary" icon="el-icon-share" @click="dialogVisible = true , articleHtml = getArticle(scope.row.id)"></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -35,7 +35,7 @@
           width="50%"
           height="50%"
           :before-close="handleClose">
-          <span>{{textDialog}}</span>
+          <span>{{articleID}}</span>
           <span slot="footer" class="dialog-footer">
             <el-button @click="dialogVisible = false">取 消</el-button>
             <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
@@ -75,7 +75,8 @@
 
 <script>
 import { getCenters } from '@/api/article'
-import {getKeywordTree} from '@/api/article'
+//import {getKeywordTree} from '@/api/article'
+import { getArticleHtml } from '@/api/article'
 
 
 export default {
@@ -93,7 +94,7 @@ export default {
       },
     editableTabsValue: '',
     dialogVisible: false,
-    textDialog:'',
+    articleID:'',
     }
   },
   
@@ -106,9 +107,10 @@ export default {
     async getTarget() {
       await getCenters().then(response => {
         this.centers = response.data;
-        console.log(this.centers[0].center);
+        console.log(this.centers);
       });
     },
+
 
     handleRowClick(row, column, cell, event){
       console.log(row);

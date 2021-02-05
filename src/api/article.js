@@ -14,3 +14,19 @@ export function getKeywordTree(data) {
     data
   })
 }
+
+export function getArticleTable(data) {
+  return request({
+    url:'/article',
+    method: 'put',
+    data
+  })
+}
+
+export function getArticleHtml(data) {
+  return request({
+    url:'/articlefilter',
+    method: 'post',
+    data
+  })
+}
