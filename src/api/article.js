@@ -6,7 +6,6 @@ export function getCenters() {
     method: 'get'
   })
 }
-<<<<<<< HEAD
 
 export function getKeywordTree(data) {
   return request({
@@ -39,5 +38,3 @@ export function getGlobalSearch(data) {
     data
   })
 }
-=======
->>>>>>> 5654995f34e8a7de6a39ff50e787f10411608ad3
