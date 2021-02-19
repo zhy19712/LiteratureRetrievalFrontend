@@ -6,3 +6,11 @@ export function fetchTarget() {
     method: 'get'
   })
 }
+
+export function changeStatus(data) {
+  return request({
+    url: '/targetfilter',
+    method: 'put',
+    data
+  })
+}
