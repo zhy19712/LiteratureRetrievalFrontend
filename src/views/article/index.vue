@@ -26,10 +26,10 @@
       <el-container :gutter="20">
           <el-header  style=" border:1px">
             <el-col  :span="6">
-              <el-input v-model="filter_table" placeholder="输入关键字进行过滤" clearable maxlength="2000" style=" width: 200px" />
+              <el-input v-model="filter_table" placeholder="关键字过滤" clearable maxlength="2000" style=" width: 120px" />
             </el-col>
-            <!-- <el-col  style=" width: 70px"><p>全局搜索: </p></el-col> -->
-            <el-col  :span="6">
+            <el-col  style=" width: 70px"><p>全局搜索: </p></el-col>
+            <el-col  :span="9">
               <el-date-picker 
 		             v-model="search_data"
                  placeholder="起始时间"
@@ -40,7 +40,7 @@
                 end-placeholder="结束日期">
 		          </el-date-picker>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="5">
               <el-input v-model="global_search" placeholder="全局搜索关键字" clearable maxlength="2000" style=" width: 200px" />
             </el-col>
 
@@ -67,11 +67,11 @@
                <span class="col-cont" v-html="showData(scope.row.target)"></span>
              </template>
           </el-table-column>
-          <el-table-column label="链接" width="100px">
+          <!-- <el-table-column label="链接" width="100px">
             <template slot-scope="scope">
               <el-button type="primary" icon="el-icon-share" @click="dialogVisible = true , getArticle(scope.row.id)"></el-button>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
         </el-aside>
 
@@ -91,18 +91,13 @@
           </el-tabs>
         </el-header>
           <!-- 正文显示-- -->
-        <el-main style="height:100%">
-          <el-container>
-            <el-header class="header" :gutter="20" style="text-align:left; font-size: 12px; margin-bottom: -15px;">{{editableTabs.length > 0 ? 'Title: ' + editableTabs[global_index].name : ''}}</el-header>
-            <!-- <el-footer class="url" :gutter="20" style="text-align:left; font-size: 12px; margin-bottom: 10px; border: 1px solid">URL: {{dataGet[global_index].url}}</el-footer> -->
-            <el-main class="text" style="text-align:left; height:400px; font-size: 12px; margin-bottom: 10px;">{{editableTabs.length > 0 ? editableTabs[global_index].text : ''}}</el-main>
-          </el-container>
+        <el-main v-if="editableTabs.length > 0" style="height:100%">
+          <iframe :src="getArticle(editableTabs[global_index].id)" frameborder="0" width="100%" height="500px"></iframe>
         </el-main>
         </el-container>
         </el-container>
       </el-container>
     </el-container>
-
     <el-dialog
       :visible.sync="dialogVisible"
       width="50%"
@@ -184,17 +179,11 @@ export default {
   methods:{
     //全局搜索
     globalSearch(search_data,key){
-      console.log(search_data);
-      console.log(key);
-      // if(search_data.startTime > search_data.endTime){
-			//     this.$message({
-			// 	  type: 'warning',
-			// 	  message: "请重新选择时间区间！" 
-			//   })
-		  // };
-      // getGlobalSearch({"start_date":search_data.startTime, "end_date":search_data.endTime, "keyword":key}).then(
-      //   response =>{this.tableData = response.data;})
-      // console.log(this.tableData);
+      // console.log(search_data);
+      // console.log(key);
+      getGlobalSearch({"start_date":search_data[0], "end_date":search_data[1], "keyword":key}).then(
+        response =>{this.tableData = response.data;})
+      console.log(this.tableData);
     },
 
     //筛选变色
@@ -218,10 +207,11 @@ export default {
     },
 
     getArticle(id){
+      console.log(id);
       getArticleHtml({"article_id":id, "type":"html"}).then(response => {
         this.articleHtml = response.data;
-        //console.log(this.articleHtml)
       });
+      return this.articleHtml;
     },
 
     centerClick(centerId){
@@ -249,6 +239,9 @@ export default {
       if(column.label == '链接'){
         return;
       }
+
+      // getArticle(row.id);
+
       var _index= row.id-1;
       var tabLabel = row.title
 
@@ -256,7 +249,7 @@ export default {
         tabLabel = tabLabel.slice(0, 10);
       }
 
-      var tagIn = {name:row.title,label:tabLabel, tabIndex:_index, text:row.text};
+      var tagIn = {name:row.title,label:tabLabel, tabIndex:_index, text:row.text, id:row.id};
       var indexRepeat = this.editableTabs.map(value=>value.tabIndex);
 
       if(indexRepeat.indexOf(_index) == -1){
