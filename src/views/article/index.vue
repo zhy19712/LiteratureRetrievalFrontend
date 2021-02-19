@@ -28,30 +28,23 @@
             <el-col  :span="6">
               <el-input v-model="filter_table" placeholder="输入关键字进行过滤" clearable maxlength="2000" style=" width: 200px" />
             </el-col>
-            <el-col  :span="6"  style=" width: 75px"><p>全局搜索</p></el-col>
-            <el-col  :span="6" style=" width: 150px">
+            <!-- <el-col  style=" width: 70px"><p>全局搜索: </p></el-col> -->
+            <el-col  :span="6">
               <el-date-picker 
-		             v-model="search_data.startTime"
+		             v-model="search_data"
+                 placeholder="起始时间"
                  value-format="yyyy-MM-dd"
-                 type="date"
-                 style=" width: 150px"
-                 >
+                 type="daterange"
+                 range-separator="至"
+                 start-placeholder="开始日期"
+                end-placeholder="结束日期">
 		          </el-date-picker>
             </el-col>
-            <el-col :span="6" style=" width: 20px"><p> ---</p></el-col>
-            <el-col  :span="6" style=" width: 150px">
-		          <el-date-picker 
-		              v-model="search_data.endTime"
-                  value-format="yyyy-MM-dd"
-                  type="date"
-                  style=" width: 150px"
-                  >
-		         </el-date-picker>
-            </el-col>
-            <el-col  :span="6">
+            <el-col :span="6">
               <el-input v-model="global_search" placeholder="全局搜索关键字" clearable maxlength="2000" style=" width: 200px" />
             </el-col>
-            <el-col  :span="6">
+
+            <el-col :span="25"> 
               <el-button icon="el-icon-search" circle @click="globalSearch(search_data,global_search)"></el-button>
             </el-col>
 
@@ -147,10 +140,7 @@ export default {
         children: 'children',
         label: 'label'
       },
-    search_data:{
-				startTime: '',
-				endTime: ''
-			},
+    search_data:'',
     editableTabsValue: '',
     articleHtml:'',
     filter_text:'',
@@ -174,21 +164,6 @@ export default {
         console.log(filtered_tables);
      
     };
-
-    
-    // if(search_time)
-    // {
-    //   console.log(search_time);
-    //   if(!search_time.startTime || !search_time.endTime){
-		// 	    this.$message({
-		// 		  type: 'warning',
-		// 		  message: "请选择时间区间！" 
-		// 	  }
-    //   )
-		// }
-    // }
-
-
       return filtered_tables;
     },
 
@@ -209,10 +184,17 @@ export default {
   methods:{
     //全局搜索
     globalSearch(search_data,key){
-      console.log(search_data.startTime);
-      console.log(search_data.endTime);
+      console.log(search_data);
       console.log(key);
-      
+      // if(search_data.startTime > search_data.endTime){
+			//     this.$message({
+			// 	  type: 'warning',
+			// 	  message: "请重新选择时间区间！" 
+			//   })
+		  // };
+      // getGlobalSearch({"start_date":search_data.startTime, "end_date":search_data.endTime, "keyword":key}).then(
+      //   response =>{this.tableData = response.data;})
+      // console.log(this.tableData);
     },
 
     //筛选变色
@@ -251,7 +233,7 @@ export default {
 
         //侧边栏点击事件
     handleNodeClick(data) {
-      console.log(data);
+      // console.log(data);
       if(!data.keyword_id){
         return;
       }
