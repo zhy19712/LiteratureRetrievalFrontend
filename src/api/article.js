@@ -30,3 +30,11 @@ export function getArticleHtml(data) {
     data
   })
 }
+
+export function getGlobalSearch(data) {
+  return request({
+    url:'/globalsearch',
+    method: 'post',
+    data
+  })
+}
