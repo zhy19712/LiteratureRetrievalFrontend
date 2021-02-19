@@ -23,9 +23,9 @@
         </el-container>
       </el-aside>
       <!-- 显示相关的表格和正文 -->
-      <el-container :gutter="20">
+      <el-container :gutter="5">
           <el-header  style=" border:1px">
-            <el-col  :span="6">
+            <el-col  :span="3">
               <el-input v-model="filter_table" placeholder="关键字过滤" clearable maxlength="2000" style=" width: 120px" />
             </el-col>
             <el-col  style=" width: 70px"><p>全局搜索: </p></el-col>
@@ -44,10 +44,13 @@
               <el-input v-model="global_search" placeholder="全局搜索关键字" clearable maxlength="2000" style=" width: 200px" />
             </el-col>
 
-            <el-col :span="25"> 
+            <el-col :span="1"> 
               <el-button icon="el-icon-search" circle @click="globalSearch(search_data,global_search)"></el-button>
             </el-col>
 
+            <el-col :span="4"> 
+              <el-button  icon="el-icon-sort" @click="switchMain" style="margin-left: 8px">{{message}}</el-button>
+            </el-col>
           </el-header>
         <el-container style="height:550px">
         <el-aside class="table-aside"  :gutter="20" width="500px"  style=" border:1px">
@@ -57,12 +60,12 @@
                <span class="col-cont" v-html="showData(scope.row.title)"></span>
              </template>
           </el-table-column>
-          <el-table-column prop='time' label="日期" width="100px">
+          <el-table-column prop='time' label="日期" width="150px">
             <template slot-scope="scope">
                <span class="col-cont" v-html="showData(dateFormat(scope.row.time))"></span>
              </template>
           </el-table-column>
-          <el-table-column prop='target' label="来源" width="100px">
+          <el-table-column prop='target' label="来源" width="150px">
               <template slot-scope="scope">
                <span class="col-cont" v-html="showData(scope.row.target)"></span>
              </template>
@@ -92,13 +95,17 @@
         </el-header>
           <!-- 正文显示-- -->
         <el-main v-if="editableTabs.length > 0" style="height:100%">
-          <iframe :src="getArticle(editableTabs[global_index].id)" frameborder="0" width="100%" height="500px"></iframe>
+          <iframe v-show="isHtml" :src="getArticle(editableTabs[global_index].id)" frameborder="0" width="100%" height="500px"></iframe>
+          <div v-show="isText">
+            <el-header class="header" :gutter="20" style="text-align:left; font-size: 12px; margin-bottom: -15px;">{{editableTabs.length > 0 ? 'Title: ' + editableTabs[global_index].name : ''}}</el-header>
+            <el-main class="text" style="text-align:left; height:400px; font-size: 12px; margin-bottom: 10px;">{{editableTabs.length > 0 ? editableTabs[global_index].text : ''}}</el-main>
+          </div>
         </el-main>
         </el-container>
         </el-container>
       </el-container>
     </el-container>
-    <el-dialog
+    <!-- <el-dialog
       :visible.sync="dialogVisible"
       width="50%"
       height="50%"
@@ -108,7 +115,7 @@
             <el-button @click="dialogVisible = false">取 消</el-button>
             <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
           </span>
-      </el-dialog>
+      </el-dialog> -->
   </div>
 </template>
 
@@ -142,7 +149,10 @@ export default {
     filter_table:'',
     global_search:'',
 
+    isHtml:true,
+    isText:false,
     dialogVisible: false,
+    message: "切换纯文本",
     }
   },
 
@@ -155,8 +165,6 @@ export default {
     if(serch_key) {
         filtered_tables = this.tableData.filter(data => !serch_key || data.title.toLowerCase().includes(serch_key.toLowerCase())
         || data.time.toLowerCase().includes(serch_key.toLowerCase()) || data.target.toLowerCase().includes(serch_key.toLowerCase()))
-        
-        console.log(filtered_tables);
      
     };
       return filtered_tables;
@@ -177,13 +185,21 @@ export default {
   },
 
   methods:{
+    //切换正文显示
+    switchMain(){
+      if (this.isHtml) {
+          this.message = "切换网页";
+        } else {
+          this.message = "切换纯文本";}
+      
+      this.isHtml = ! this.isHtml;
+      this.isText = ! this.isText;
+    },
+
     //全局搜索
     globalSearch(search_data,key){
-      // console.log(search_data);
-      // console.log(key);
       getGlobalSearch({"start_date":search_data[0], "end_date":search_data[1], "keyword":key}).then(
         response =>{this.tableData = response.data;})
-      console.log(this.tableData);
     },
 
     //筛选变色
@@ -202,12 +218,10 @@ export default {
     async getTarget() {
       await getCenters().then(response => {
         this.centers = response.data;
-        //console.log(this.centers);
       });
     },
 
     getArticle(id){
-      console.log(id);
       getArticleHtml({"article_id":id, "type":"html"}).then(response => {
         this.articleHtml = response.data;
       });
@@ -215,15 +229,12 @@ export default {
     },
 
     centerClick(centerId){
-      //console.log(centerId)
       getKeywordTree({"center_id":centerId}).then(response => {
-        this.menuData = response.data;
-        console.log(this.menuData)})
+        this.menuData = response.data;})
     }, 
 
         //侧边栏点击事件
     handleNodeClick(data) {
-      // console.log(data);
       if(!data.keyword_id){
         return;
       }
@@ -231,16 +242,14 @@ export default {
       //初始化显示第一页内容
       getArticleTable({"page": 1, "size":10, "keyword_id":keywordID}).then(response => {
         this.tableData = response.data;
-        console.log(this.tableData)})
+        })
       },
 
     handleRowClick(row, column, cell, event){
-      console.log(row);
+      
       if(column.label == '链接'){
         return;
       }
-
-      // getArticle(row.id);
 
       var _index= row.id-1;
       var tabLabel = row.title
@@ -254,7 +263,7 @@ export default {
 
       if(indexRepeat.indexOf(_index) == -1){
         this.editableTabs.push(tagIn);
-        }
+      }
       
       let indexGlobal = this.editableTabs.map(value=>value.tabIndex);
       this.editableTabsValue = row.title;
@@ -264,7 +273,6 @@ export default {
     
     //分页tabs事件处理
     handleTabClose(targetName) {
-      //console.log(targetName)
       var _tabIndexs = this.editableTabs.map(value=>value.name);
       var close_tabIndex = _tabIndexs.indexOf(targetName);
 
@@ -290,7 +298,6 @@ export default {
       },
       
     handleTabClick(tab) {
-      //console.log(tab.dataIndex)
       var _tabIndexs = this.editableTabs.map(value=>value.name);
       var cur_tabIndex = _tabIndexs.indexOf(tab.name)
       this.global_index = cur_tabIndex;
