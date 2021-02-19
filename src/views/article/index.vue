@@ -48,7 +48,7 @@
               <el-button icon="el-icon-search" circle @click="globalSearch(search_data,global_search)"></el-button>
             </el-col>
 
-            <el-col :span="4"> 
+            <el-col v-if="editableTabs.length > 0" :span="4"> 
               <el-button  icon="el-icon-sort" @click="switchMain" style="margin-left: 8px">{{message}}</el-button>
             </el-col>
           </el-header>
