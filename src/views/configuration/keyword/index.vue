@@ -25,7 +25,8 @@
 	  </el-header>
 	  
 	  <el-container>
-		        <el-aside width="700px">
+		        <el-aside width="300px">
+				<br/>
 				<el-row :gutter="20">
 					<el-col :span="10"><el-input  v-model="category_item.category" placeholder="请输入要添加的分类名称"></el-input></el-col>
 					<el-button type="primary" @click="add_category_Item" class="add-btn" plain>添加分类</el-button>
@@ -34,8 +35,11 @@
 				
 				
 				 <el-table
+									     ref="singleTable"
 				 						 :data="Tabledata_categories_in_a_center"
-				 						 style="width: 80%"
+										 highlight-current-row
+										 @current-change="handleCurrentChange"
+				 						 style="width: 100%"
 										 :row-class-name="tableRowClassName"
 										 max-height="500">
 				 						 <el-table-column
@@ -55,11 +59,11 @@
 				 												 width="80"
 				 												>
 				 						 </el-table-column> -->
-										 <el-table-column prop="remark" label="查询关键字按钮">
+										 <!--el-table-column prop="remark" label="查询关键字按钮">
 										     <template slot-scope="scope">
 										         <el-button type="primary"  @click="fetch_keywords_by_categoryid_click(scope.row,scope.$index)" circle></el-button>
 										     </template>
-										 </el-table-column>
+										 </el-table-column-->
 										 
 										 <el-table-column prop="remark" label="操作">
 										     <template slot-scope="scope">
@@ -355,6 +359,30 @@
 		        return '';
 		      },
 		
+		handleCurrentChange(val) {
+		  console.log("handleCurrentChange(val)",val)
+		  if (val) {
+			  this.currentRow = val;
+			  
+			  this.category_clicked_in_left_table = val.id
+			  this.listLoading = true
+			  fetchKeyword_filter_API({"category_id":val.id}).then(response => {
+			    this.Tabledata_keywords_by_categoryid = response.data
+			    this.listLoading = false})		
+			  
+		  }
+  
+			
+		},
+		/*
+		fetch_keywords_by_categoryid_click(row,idx){	
+					  this.Row_clicked = idx
+					  this.category_clicked_in_left_table = row.id
+					  this.listLoading = true
+					  fetchKeyword_filter_API({"category_id":row.id}).then(response => {
+					    this.Tabledata_keywords_by_categoryid = response.data
+					    this.listLoading = false})		  
+		},*/
 		
 		
 		/*-------------右侧表格------------*/	
