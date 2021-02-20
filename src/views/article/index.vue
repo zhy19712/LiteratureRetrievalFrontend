@@ -96,6 +96,7 @@
           <!-- 正文显示-- -->
         <el-main v-if="editableTabs.length > 0" style="height:100%">
           <iframe v-show="isHtml" :src="getArticle(editableTabs[global_index].id)" frameborder="0" width="100%" height="500px"></iframe>
+          
           <div v-show="isText">
             <el-header class="header" :gutter="20" style="text-align:left; font-size: 12px; margin-bottom: -15px;">{{editableTabs.length > 0 ? 'Title: ' + editableTabs[global_index].name : ''}}</el-header>
             <el-main class="text" style="text-align:left; height:400px; font-size: 12px; margin-bottom: 10px;">{{editableTabs.length > 0 ? editableTabs[global_index].text : ''}}</el-main>
@@ -148,6 +149,7 @@ export default {
     filter_text:'',
     filter_table:'',
     global_search:'',
+    _text:'',
 
     isHtml:true,
     isText:false,
@@ -228,6 +230,13 @@ export default {
       return this.articleHtml;
     },
 
+    async getArticleText(id){ 
+      await getArticleHtml({"article_id":id, "type":"text"}).then(response => {
+      this.articleText = response.data;
+      });
+      return this.articleText;
+    },
+
     centerClick(centerId){
       getKeywordTree({"center_id":centerId}).then(response => {
         this.menuData = response.data;})
@@ -243,9 +252,9 @@ export default {
       getArticleTable({"page": 1, "size":10, "keyword_id":keywordID}).then(response => {
         this.tableData = response.data;
         })
-      },
+    },
 
-    handleRowClick(row, column, cell, event){
+    async handleRowClick(row, column, cell, event){
       
       if(column.label == '链接'){
         return;
@@ -253,12 +262,17 @@ export default {
 
       var _index= row.id-1;
       var tabLabel = row.title
+      var _text;
 
       if(tabLabel.length > 10){
         tabLabel = tabLabel.slice(0, 10);
-      }
+      };
+      
+       _text = await this.getArticleText(row.id);
+      
+      // console.log(_text);
 
-      var tagIn = {name:row.title,label:tabLabel, tabIndex:_index, text:row.text, id:row.id};
+      var tagIn = {name:row.title,label:tabLabel, tabIndex:_index, text: _text.text, id:row.id};
       var indexRepeat = this.editableTabs.map(value=>value.tabIndex);
 
       if(indexRepeat.indexOf(_index) == -1){
