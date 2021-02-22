@@ -4,27 +4,27 @@
       <el-col :span="16" :offset=4> -->
         <!-- 显示各个中心 -->
     <el-row :gutter="20">
-      <el-col el-col :span="20"  style="width:95% ;text-align:left">
+      <el-col el-col :span="20"  style="width:100% ;text-align:left">
         <el-button type="primary" v-for="(item, index) in centers" :key="'Center' + index"  size="small" @click="centerClick(item.id)">{{ item.center }}</el-button>
         <br><br>
       </el-col>
     </el-row>
 
-  <el-container style="height:620px; width:95%; border:1px solid #eee">
+  <el-container style="height:620px; width:100%; border:1px solid #eee">
       <!-- 边-显示来源（menu） -->
       <el-aside class="menu-aside" width="250px"  style=" border:1px">
         <el-container>
           <el-header style=" border:1px">
             <el-input v-model="filter_text" placeholder="输入关键字进行过滤" clearable maxlength="2000" />
           </el-header>
-          <el-main style="height:500px">
+          <el-main style="height:500px; border:1px solid #eee ">
             <el-tree :data="menuData" :props="defaultProps" :filter-node-method="filterNode" @node-click="handleNodeClick" ref="tree"></el-tree>
           </el-main>
         </el-container>
       </el-aside>
       <!-- 显示相关的表格和正文 -->
       <el-container :gutter="5">
-          <el-header  style=" border:1px">
+          <el-header  style=" border:1px ">
             <el-col  :span="3">
               <el-input v-model="filter_table" placeholder="关键字过滤" clearable maxlength="2000" style=" width: 120px" />
             </el-col>
