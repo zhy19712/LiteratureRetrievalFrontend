@@ -18,7 +18,7 @@
             <el-input v-model="filter_text" placeholder="输入关键字进行过滤" clearable maxlength="2000" />
           </el-header>
           <el-main style="height:500px; border:1px solid #eee ">
-            <el-tree :data="menuData" :props="defaultProps" :filter-node-method="filterNode" @node-click="handleNodeClick" ref="tree"></el-tree>
+            <el-tree :data="menuData" :props="defaultProps" :filter-node-method="filterNode" @node-click="handleNodeClick" ref="tree" highlight-current></el-tree>
           </el-main>
         </el-container>
       </el-aside>
@@ -54,28 +54,32 @@
           </el-header>
         <el-container style="height:550px">
         <el-aside class="table-aside"  :gutter="20" width="500px"  style=" border:1px">
-          <el-table :data="tables"  @row-click="handleRowClick" border style="width:100%;"  max-height="520">
-          <el-table-column prop='title' label="标题" width="200px">
+          <el-table :data="tables" 
+          highlight-current-row
+          @current-change="handleCurrentChange"  
+          @row-click="handleRowClick" 
+          border style="width:100%;"  max-height="520">
+            <el-table-column prop='title' label="标题" width="200px">
+              <template slot-scope="scope">
+                 <span class="col-cont" v-html="showData(scope.row.title)"></span>
+               </template>
+           </el-table-column>
+           <el-table-column prop='time' label="日期" width="150px">
              <template slot-scope="scope">
-               <span class="col-cont" v-html="showData(scope.row.title)"></span>
-             </template>
-          </el-table-column>
-          <el-table-column prop='time' label="日期" width="150px">
-            <template slot-scope="scope">
-               <span class="col-cont" v-html="showData(dateFormat(scope.row.time))"></span>
-             </template>
-          </el-table-column>
-          <el-table-column prop='target' label="来源" width="150px">
+                <span class="col-cont" v-html="showData(dateFormat(scope.row.time))"></span>
+              </template>
+            </el-table-column>
+            <el-table-column prop='target' label="来源" width="150px">
               <template slot-scope="scope">
                <span class="col-cont" v-html="showData(scope.row.target)"></span>
              </template>
-          </el-table-column>
-        </el-table>
+            </el-table-column>
+          </el-table>
         </el-aside>
 
-        <el-container>
+        <el-container style="width:100%; border:1px solid #eee">
         <!-- 文献栏位--可用el-动态编辑标签 -->
-        <el-header :gutter="20" style="font-size: 12px;  border:1px">
+        <el-header :gutter="20" style="font-size: 12px;  border:1px ">
           <el-tabs class="header" v-model="editableTabsValue" type="card" closable @tab-click="handleTabClick" @tab-remove="handleTabClose">
             <el-tab-pane
               :key="tab.name"
@@ -87,9 +91,8 @@
           </el-tabs>
         </el-header>
           <!-- 正文显示-- -->
-        <el-main v-if="editableTabs.length > 0" style="height:100%">
-          <iframe v-show="isHtml" :src="getArticle(editableTabs[global_index].id)" frameborder="0" width="100%" height="500px"></iframe>
-          
+        <el-main v-if="editableTabs.length > 0" style="height:450px; padding:0">
+          <iframe v-show="isHtml" :src="getArticle(editableTabs[global_index].id)" frameborder="0" width="100%" height="90%" padding="-10px"></iframe>
           <div v-show="isText">
             <el-header class="header" :gutter="20" style="text-align:left; font-size: 12px; margin-bottom: -15px;">{{editableTabs.length > 0 ? 'Title: ' + editableTabs[global_index].name : ''}}</el-header>
             <el-main class="text" style="text-align:left; height:400px; font-size: 12px; margin-bottom: 10px;">{{editableTabs.length > 0 ? editableTabs[global_index].text : ''}}</el-main>
@@ -132,7 +135,7 @@ export default {
     filter_table:'',
     global_search:'',
     _text:'',
-
+    currentRow: null,
     isHtml:true,
     isText:false,
     dialogVisible: false,
@@ -169,6 +172,10 @@ export default {
   },
 
   methods:{
+      handleCurrentChange(val) {
+        this.currentRow = val;
+      },
+
     //切换正文显示
     switchMain(){
       if (this.isHtml) {
