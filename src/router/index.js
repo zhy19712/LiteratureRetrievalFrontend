@@ -74,6 +74,11 @@ export const constantRoutes = [
       path: 'configuration/crawler',
       component: () => import('@/views/configuration/crawler/index'),
       meta: { title: '爬虫设置', icon: 'dashboard' }
+    },
+    {
+      path: 'configuration/user',
+      component: () => import('@/views/configuration/user/index'),
+      meta: { title: '用户设置', icon: 'dashboard' }
     }
     ]
   },
