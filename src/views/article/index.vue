@@ -322,11 +322,11 @@ export default {
 </script>
 
 <style>
-  .el-aside {
+  /* .el-aside {
     background-color: #D3DCE6;
     color: #333;
     text-align: left;
     margin-bottom: 0px;
     line-height: 50px;
-  }
+  } */
 </style>

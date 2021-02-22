@@ -7,7 +7,7 @@
 	  <div class="head">
 		  <el-form :inline="true" :model="formInline_select_center" class="demo-form-inline">	 
 		    <el-form-item label="中心选择">			  
-			  <el-select v-model="formInline_select_center.center" placeholder="请选择中心">
+			  <el-select v-model="formInline_select_center.center" placeholder="请选择中心" @change="changeCenter()">
 			      <el-option
 			        v-for="item in centers"
 			        :key="item.id"
@@ -15,11 +15,8 @@
 			        :value="item.id">
 			      </el-option>
 			    </el-select>
-				
 		    </el-form-item>
-		    <el-form-item>
-		      <el-button type="primary" @click="onSubmit_select_center">查询</el-button>
-		    </el-form-item>
+
 		  </el-form>
 	  </div> <!--head-->
 	  </el-header>
@@ -31,8 +28,7 @@
 					<el-col :span="10"><el-input  v-model="category_item.category" placeholder="请输入要添加的分类名称"></el-input></el-col>
 					<el-button type="primary" @click="add_category_Item" class="add-btn" plain>添加分类</el-button>
 				</el-row>
-				
-				
+
 				
 				 <el-table
 									     ref="singleTable"
@@ -99,7 +95,7 @@
 					<el-button type="primary" @click="add_keyword_Item" class="add-btn" plain >添加关键字</el-button>  <!--style="width: 90%"-->
 					
 			    </el-row>
-	           <p>表：这里应该显示一下是哪个分类下的关键字，或左侧选中高亮</p>
+				
 	           <el-table :data="Tabledata_keywords_by_categoryid" style="width: 90%"  max-height="500">
 	               <el-table-column label="表格序号" width="200"><template slot-scope="scope"> {{scope.$index + 1 }} </template></el-table-column>
 	     		  
@@ -242,26 +238,15 @@
 													//console.log("this.Tabledata_categories_in_a_center",this.Tabledata_categories_in_a_center)						  		  
 		})//then
 	  },
-		onSubmit_select_center(){
-						  //console.log("选择中心",this.formInline_select_center.center)
+	  changeCenter() {
 								  this.Row_clicked = null,
 								  this.Tabledata_keywords_by_categoryid = null,
 								  this.listLoading = true
 								  		  fetchCategory_by_center_API({"center_id":this.formInline_select_center.center}).then(response => {
 								  		    this.Tabledata_categories_in_a_center = response.data	
 								  		    this.listLoading = false  })
-											
-								  this.listLoading = true
-								  		  fetchCenter_API().then(response => {
-								  		    this.centers = response.data	
-								  		    this.listLoading = false 
-											console.log("this.centers",this.centers)
-											//console.log("this.Tabledata_categories_in_a_center",this.Tabledata_categories_in_a_center)						  		  
-								  })//then
-								  //onSubmit_select_center
-								  },
-						
-		  
+	    				 
+	  },//change
 		  
 /*------------------------下面body的部分-----------------------------------*/			
 		/*-------------左侧表格------------*/	

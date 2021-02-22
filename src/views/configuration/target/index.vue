@@ -7,18 +7,16 @@
 	  <div class="head">
 		  <el-form :inline="true" :model="formInline_select_center" class="demo-form-inline">	 
 		    <el-form-item label="中心选择">			  
-			  <el-select v-model="formInline_select_center.center" placeholder="请选择中心">
+			  <el-select v-model="formInline_select_center.center" placeholder="请选择中心" @change="changeCenter()">
 			      <el-option
 			        v-for="item in centers"
 			        :key="item.id"
 			        :label="item.center"
-			        :value="item.id">
+			        :value="item.id"
+					>
 			      </el-option>
 			    </el-select>
 				
-		    </el-form-item>
-		    <el-form-item>
-		      <el-button type="primary" @click="onSubmit_select_center">查询</el-button>
 		    </el-form-item>
 		  </el-form>
 	  </div> <!--head-->
@@ -29,7 +27,7 @@
 				<br/>
 				<el-row :gutter="20">
 					<el-col :span="10"><el-input  v-model="target_item.target" placeholder="请输入要添加的target"></el-input></el-col>
-					<el-col :span="10"><el-input  v-model="target_item.center_id" placeholder="请输入center_id"></el-input></el-col>
+					<!--el-col :span="10"><el-input  v-model="target_item.center_id" placeholder="请输入center_id"></el-input></el-col-->
 					<el-button type="primary" @click="add_target_Item" class="add-btn" plain>添加Target</el-button>
 				</el-row>
 
@@ -73,7 +71,20 @@
 				 												label="status"
 				 												 width="80"
 				 												>
-				 						 </el-table-column> 										 
+				 						 </el-table-column> 	
+																			  
+										<el-table-column prop="status" label="状态">
+										  <template slot-scope="scope">
+										    <el-switch
+										      v-model="scope.row.status"
+										      active-color="#13ce66"
+										      inactive-color="#ff4949"
+										      :active-value="1"
+										      :inactive-value="0"
+										      @change="changeStatus(scope.row)"
+										    />
+										  </template>
+										</el-table-column>		
 										 
 										 
 										 <!--el-table-column prop="remark" label="查询关键字按钮">
@@ -118,24 +129,18 @@
 	import Vue from 'vue'
 	
 	import { fetchTarget_API} from '@/api/monitor'
+	import { fetchTarget_by_center_API} from '@/api/monitor'
 	
 	import { fetchCenter_API} from '@/api/monitor' 
 
-
-
 	import { postTarget_API } from '@/api/monitor' 
-
-	
 
 	import { deleteTarget_API } from '@/api/monitor'	
 	
 	import { editTarget_API } from '@/api/monitor'	
 
-	
-
-
-	
 	import { change_Keyword_Status_API } from '@/api/monitor'
+	import { change_Target_Status_API } from '@/api/monitor'
 	
 	
 	export default {
@@ -168,7 +173,6 @@
 		  Tabledata_categories_in_a_center:null,
 		  
 		  target_clicked_in_left_table:null,
-		  
 		  
 		  edit_target_Row:null ,
 		  //Tabledata_keywords_by_targetid:null,
@@ -210,27 +214,6 @@
 													//console.log("this.Tabledata_categories_in_a_center",this.Tabledata_categories_in_a_center)						  		  
 		})//then
 	  },
-		onSubmit_select_center(){
-						  //console.log("选择中心",this.formInline_select_center.center)
-								  this.Row_clicked = null,
-
-											
-		  		this.listLoading = true
-		  				  fetchTarget_API().then(response => {
-		  					this.Tabledata_targets = response.data
-		  					this.listLoading = false 
-		               console.log("targtes",this.Tabledata_targets)
-								/*		
-								  this.listLoading = true
-								  		  fetchCenter_API().then(response => {
-								  		    this.centers = response.data	
-								  		    this.listLoading = false 
-											console.log("this.centers",this.centers)
-											//console.log("this.Tabledata_categories_in_a_center",this.Tabledata_categories_in_a_center)						  		  
-								  */
-								  })
-								  //onSubmit_select_center
-								  },
 			
 		  
 /*------------------------下面body的部分-----------------------------------*/			
@@ -247,18 +230,19 @@
 		        });
 		        return;
 		    }
+			/*
 			if(!this.target_item.center_id){
 			    this.$message({
 			        message: '请输入center_id', //这个warning只能从页面的中间弹出么？
 			        type: 'warning'
 			    });
 			    return;
-			}
+			}*/
 			
 			this.target_item.center_id = this.formInline_select_center.center
 		
 			this.Tabledata_targets.push(this.target_item)
-			postTarget_API({ "center_id" :this.target_item.center_id, "target":this.target_item.target,"type":"1","remark":null,"status":"1"})
+			postTarget_API({ "center_id" :this.formInline_select_center.center, "target":this.target_item.target,"type":"1","remark":null,"status":"1"})
 			this.target_item = {
 				"id": '',
 				"center_id": '',
@@ -318,9 +302,9 @@
 			}
 			console.log("修改提交",edit_data)
 			
-			//editTarget_API(edit_data)
+		    editTarget_API(edit_data)
 			
-			Vue.set(this.Tabledata_categories_in_a_center, this.target_table_Index, this.target_item);
+			Vue.set(this.Tabledata_targets, this.target_table_Index, this.target_item);
 		
 			
 		   
@@ -348,22 +332,30 @@
 				})		*/
 			  
 		  }
-  
-			
 		},
-		/*
-		fetch_keywords_by_targetid_click(row,idx){	
-					  this.Row_clicked = idx
-					  this.target_clicked_in_left_table = row.id
-					  this.listLoading = true
-					  fetchKeyword_filter_API({"target_id":row.id}).then(response => {
-					    this.Tabledata_keywords_by_targetid = response.data
-					    this.listLoading = false})		  
-		},*/
+		changeStatus(row) {
+		  console.log("changeStatus函数")
+		  console.log("row",row)
+		  console.log("row.status",row.status)
+		  
+		  change_Target_Status_API(row).then(response => {
+		    console.log(response)
+		  }) 
+		},//changeStatus
 		
-		
-		/*-------------右侧表格------------*/	
-
+		changeCenter() {
+		  //console.log("changeCenter函数传入的值",data)
+		  
+		  this.listLoading = true
+		  		  fetchTarget_by_center_API({"center_id":this.formInline_select_center.center}).then(response => {
+		  			this.Tabledata_targets = response.data
+		  			this.listLoading = false
+		  
+		         console.log("targtes",this.Tabledata_targets)
+		  				  })
+		  
+		   
+		}//change
 		
 		},//methods
 			
