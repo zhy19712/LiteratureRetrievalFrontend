@@ -12,12 +12,12 @@
 
   <el-container style="height:620px; width:95%; border:1px solid #eee">
       <!-- 边-显示来源（menu） -->
-      <el-aside class="menu-aside" width="300px"  style=" border:1px">
+      <el-aside class="menu-aside" width="250px"  style=" border:1px">
         <el-container>
           <el-header style=" border:1px">
             <el-input v-model="filter_text" placeholder="输入关键字进行过滤" clearable maxlength="2000" />
           </el-header>
-          <el-main>
+          <el-main style="height:500px">
             <el-tree :data="menuData" :props="defaultProps" :filter-node-method="filterNode" @node-click="handleNodeClick" ref="tree"></el-tree>
           </el-main>
         </el-container>
@@ -54,7 +54,7 @@
           </el-header>
         <el-container style="height:550px">
         <el-aside class="table-aside"  :gutter="20" width="500px"  style=" border:1px">
-          <el-table :data="tables"  @row-click="handleRowClick" border style="width:100%; height:520px">
+          <el-table :data="tables"  @row-click="handleRowClick" border style="width:100%;"  max-height="520">
           <el-table-column prop='title' label="标题" width="200px">
              <template slot-scope="scope">
                <span class="col-cont" v-html="showData(scope.row.title)"></span>
@@ -70,11 +70,6 @@
                <span class="col-cont" v-html="showData(scope.row.target)"></span>
              </template>
           </el-table-column>
-          <!-- <el-table-column label="链接" width="100px">
-            <template slot-scope="scope">
-              <el-button type="primary" icon="el-icon-share" @click="dialogVisible = true , getArticle(scope.row.id)"></el-button>
-            </template>
-          </el-table-column> -->
         </el-table>
         </el-aside>
 
@@ -88,8 +83,6 @@
               :label="tab.label"
               :name="tab.name"
             >
-              <!-- :label="tab.name"
-              :name="tab.tabIndex" -->
             </el-tab-pane>
           </el-tabs>
         </el-header>
@@ -106,17 +99,6 @@
         </el-container>
       </el-container>
     </el-container>
-    <!-- <el-dialog
-      :visible.sync="dialogVisible"
-      width="50%"
-      height="50%"
-      :before-close="handleClose">
-        <iframe :src="articleHtml" frameborder="0" width="100%" height="500px"></iframe>
-          <span slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-          </span>
-      </el-dialog> -->
   </div>
 </template>
 
