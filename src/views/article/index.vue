@@ -10,11 +10,11 @@
       </el-col>
     </el-row>
 
-  <el-container style="height:620px; width:100%; border:1px solid #eee">
+  <el-container style="height:620px; width:100%;">
       <!-- 边-显示来源（menu） -->
-      <el-aside class="menu-aside" width="250px"  style=" border:1px">
+      <el-aside class="menu-aside" width="250px"  style=" border:1px solid #eee">
         <el-container>
-          <el-header style=" border:1px">
+          <el-header style=" border:1px; padding:10px;">
             <el-input v-model="filter_text" placeholder="输入关键字进行过滤" clearable maxlength="2000" />
           </el-header>
           <el-main style="height:500px; border:1px solid #eee ">
@@ -24,9 +24,9 @@
       </el-aside>
       <!-- 显示相关的表格和正文 -->
       <el-container :gutter="5">
-          <el-header  style=" border:1px ">
+          <el-header  style="padding:10px; border:1px solid #eee">
             <el-col  :span="3">
-              <el-input v-model="filter_table" placeholder="关键字过滤" clearable maxlength="2000" style=" width: 120px" />
+              <el-input v-model="filter_table" placeholder="表格过滤" clearable maxlength="2000" style=" width: 120px" />
             </el-col>
             <el-col  style=" width: 70px"><p>全局搜索: </p></el-col>
             <el-col  :span="9">
