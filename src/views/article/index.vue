@@ -189,8 +189,17 @@ export default {
 
     //全局搜索
     globalSearch(search_data,key){
+      //search_data[s_time,e_time]数组
+      if(search_data.length == 0){
+			    this.$message({
+				  type: 'warning',
+				  message: "请重新选择时间区间！" 
+			  });
+		  }
+      else {
       getGlobalSearch({"start_date":search_data[0], "end_date":search_data[1], "keyword":key}).then(
         response =>{this.tableData = response.data;})
+      };
     },
 
     //筛选变色
