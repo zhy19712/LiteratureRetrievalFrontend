@@ -18,6 +18,15 @@ export function changeStatus(data) {
  	})
    }
    
+    
+ export function change_Target_Status_API(data) {
+ 	return request({
+ 	  url: '/targetfilter',
+ 	  method: 'put',
+ 	  data
+ 	})
+   }
+   
   
 
 
@@ -58,7 +67,13 @@ export function fetchCategory_by_center_API(data) {
   })
 }
 
-
+export function fetchTarget_by_center_API(data) {
+  return request({
+    url: '/targetfilter',
+    method: 'post',
+	data
+  })
+}
  
 
 
