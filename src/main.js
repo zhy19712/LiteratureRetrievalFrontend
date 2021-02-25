@@ -22,6 +22,8 @@ Vue.use(ElementUI, { locale })
 
 Vue.config.productionTip = false
 
+// console.log(store.getters.center_id);
+
 new Vue({
   el: '#app',
   router,

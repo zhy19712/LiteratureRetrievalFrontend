@@ -24,7 +24,10 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
-  }
+  },
+  SET_CENTER_ID: (state, center_id) =>{
+    state.center_id = center_id
+  },
 }
 
 const actions = {
@@ -54,10 +57,12 @@ const actions = {
           return reject('Verification failed, please Login again.')
         }
 
-        const { name, avatar } = data
+        const { name, avatar,center_id} = data
 
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
+        commit('SET_CENTER_ID',center_id)
+
         resolve(data)
       }).catch(error => {
         reject(error)

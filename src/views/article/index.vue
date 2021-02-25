@@ -4,7 +4,7 @@
       <el-col :span="16" :offset=4> -->
         <!-- 显示各个中心 -->
     <el-row :gutter="20">
-      <el-col el-col :span="20"  style="width:100% ;text-align:left">
+      <el-col el-col :span="20"  style="width:100%; text-align:left; min-width:805px">
         <el-button type="primary" v-for="(item, index) in centers" :key="'Center' + index"  size="small" @click="centerClick(item.id)">{{ item.center }}</el-button>
         <br><br>
       </el-col>
@@ -23,14 +23,15 @@
         </el-container>
       </el-aside>
       <!-- 显示相关的表格和正文 -->
-      <el-container :gutter="5">
-          <el-header  style="padding:10px; border:1px solid #eee">
-            <el-col  :span="3">
-              <el-input v-model="filter_table" placeholder="表格过滤" clearable maxlength="2000" style=" width: 120px" />
+      <el-container >
+          <el-header :gutter="2"  style="padding:10px; border:1px solid #eee">
+            <el-col :span="3">
+              <el-input v-model="filter_table" placeholder="表格过滤" clearable maxlength="2000" style="" />
             </el-col>
-            <el-col  style=" width: 70px"><p>全局搜索: </p></el-col>
-            <el-col  :span="9">
-              <el-date-picker 
+            <el-col :span="15" offset="1" class='global_search_div' style="border:1px solid ">
+              <el-col :span="4"  style="text-align:center; height:40px"><p>全文章搜索 </p></el-col>
+              <el-col  :span="12">
+                <el-date-picker 
 		             v-model="search_data"
                  placeholder="起始时间"
                  value-format="yyyy-MM-dd"
@@ -38,17 +39,18 @@
                  range-separator="至"
                  start-placeholder="开始日期"
                 end-placeholder="结束日期">
-		          </el-date-picker>
-            </el-col>
-            <el-col :span="5">
-              <el-input v-model="global_search" placeholder="全局搜索关键字" clearable maxlength="2000" style=" width: 200px" />
-            </el-col>
+		            </el-date-picker>
+              </el-col>
+              <el-col :span="4">
+                <el-input v-model="global_search" placeholder="搜索关键字" clearable maxlength="2000" style="" />
+              </el-col>
 
-            <el-col :span="1"> 
-              <el-button icon="el-icon-search" circle @click="globalSearch(search_data,global_search)"></el-button>
+              <el-col :span="1" :offset="1"> 
+                <el-button icon="el-icon-search" circle @click="globalSearch(search_data,global_search)"></el-button>
+              </el-col>
             </el-col>
-
-            <el-col v-if="editableTabs.length > 0" :span="4"> 
+            
+            <el-col v-if="editableTabs.length > 0" :span="4" :offset="1"> 
               <el-button  icon="el-icon-sort" @click="switchMain" style="margin-left: 8px">{{message}}</el-button>
             </el-col>
           </el-header>
@@ -79,7 +81,7 @@
 
         <el-container style="width:100%; border:1px solid #eee">
         <!-- 文献栏位--可用el-动态编辑标签 -->
-        <el-header :gutter="20" style="font-size: 12px;  border:1px ">
+        <el-header :gutter="20" style="font-size: 12px;  border:1px；height:50px;">
           <el-tabs class="header" v-model="editableTabsValue" type="card" closable @tab-click="handleTabClick" @tab-remove="handleTabClose">
             <el-tab-pane
               :key="tab.name"
@@ -94,7 +96,7 @@
         <el-main v-if="editableTabs.length > 0" style="height:450px; padding:0">
           <iframe v-show="isHtml" :src="getArticle(editableTabs[global_index].id)" frameborder="0" width="100%" height="90%" padding="-10px"></iframe>
           <div v-show="isText">
-            <el-header class="header" :gutter="20" style="text-align:left; font-size: 12px; margin-bottom: -15px;">{{editableTabs.length > 0 ? 'Title: ' + editableTabs[global_index].name : ''}}</el-header>
+            <el-header class="header" style="text-align:left; font-size: 12px; margin-bottom: -15px;">{{editableTabs.length > 0 ? 'Title: ' + editableTabs[global_index].name : ''}}</el-header>
             <el-main class="text" style="text-align:left; height:400px; font-size: 12px; margin-bottom: 10px;">{{editableTabs.length > 0 ? editableTabs[global_index].text : ''}}</el-main>
           </div>
         </el-main>
@@ -168,7 +170,9 @@ export default {
   },
 
   created() {
+    // console.log(this.$store.getters.center_id);
     this.getTarget();
+    this.centerClick(this.$store.getters.center_id);
   },
 
   methods:{
