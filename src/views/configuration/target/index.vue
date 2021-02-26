@@ -304,8 +304,8 @@
 			
 		    editTarget_API(edit_data)
 			
-			Vue.set(this.Tabledata_targets, this.target_table_Index, this.target_item);
-		
+			//Vue.set(this.Tabledata_targets, this.target_table_Index, this.target_item);
+		    Vue.set(this.Tabledata_targets, this.target_table_Index, edit_data);
 			
 		   
 		},//confirm_target
@@ -344,8 +344,6 @@
 		},//changeStatus
 		
 		changeCenter() {
-		  //console.log("changeCenter函数传入的值",data)
-		  
 		  this.listLoading = true
 		  		  fetchTarget_by_center_API({"center_id":this.formInline_select_center.center}).then(response => {
 		  			this.Tabledata_targets = response.data
@@ -353,8 +351,6 @@
 		  
 		         console.log("targtes",this.Tabledata_targets)
 		  				  })
-		  
-		   
 		}//change
 		
 		},//methods

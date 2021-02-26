@@ -471,7 +471,7 @@
 				 "keyword":this.keyword_item.keyword,
 				 "type":"1"})//this.editObj.type 
 			*/
-			Vue.set(this.Tabledata_keywords_by_categoryid, this.keyword_table_Index, this.keyword_item);		 
+			Vue.set(this.Tabledata_keywords_by_categoryid, this.keyword_table_Index, edit_data);		 
 			
 			/*
 			editKeyword_API({"id":this.tableData[this.userIndex]["id"],"category_id":this.editObj.category_id,"keyword":this.editObj.keyword,"type":this.editObj.type})
