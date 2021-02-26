@@ -21,7 +21,7 @@
     </el-menu>
   <el-container style="height:620px; width:100%;">
       <!-- 边-显示来源（menu） -->
-      <el-aside class="menu-aside" width="175px"  style=" border:1px solid #eee">
+      <el-aside class="menu-aside" width="250px"  style="padding:10px;border:1px solid #eee">
         <el-container>
           <el-header style=" border:1px; padding:10px;">
             <el-input v-model="filter_text" placeholder="关键字过滤" clearable maxlength="2000" />
