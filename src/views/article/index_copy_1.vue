@@ -3,28 +3,19 @@
     <!-- <el-row :gutter="5">
       <el-col :span="16" :offset=4> -->
         <!-- 显示各个中心 -->
-    <!-- <el-row :gutter="20">
+    <el-row :gutter="20">
       <el-col el-col :span="20"  style="width:100%; text-align:left; min-width:805px">
         <el-button type="primary" v-for="(item, index) in centers" :key="'Center' + index"  size="small" @click="centerClick(item.id)">{{ item.center }}</el-button>
         <br><br>
       </el-col>
-    </el-row> -->
-    <el-menu
-    :default-active="activeIndex"
-    class="center-menu"
-    mode="horizontal"
-    @select="centerSelect"
-    background-color="#247CDA"
-    text-color="#90E1FF"
-    active-text-color="#fff">
-      <el-menu-item v-for="(item, center_index) in centers" :key="'Center' + center_index" :index="item.id.toString()" >{{ item.center }}</el-menu-item>
-    </el-menu>
+    </el-row>
+
   <el-container style="height:620px; width:100%;">
       <!-- 边-显示来源（menu） -->
-      <el-aside class="menu-aside" width="175px"  style=" border:1px solid #eee">
+      <el-aside class="menu-aside" width="250px"  style=" border:1px solid #eee">
         <el-container>
-          <el-header style=" border:1px; padding:10px;">
-            <el-input v-model="filter_text" placeholder="关键字过滤" clearable maxlength="2000" />
+          <el-header style=" border:1px; padding:5px;">
+            <el-input v-model="filter_text" placeholder="输入关键字进行过滤" clearable maxlength="2000" />
           </el-header>
           <el-main style="height:500px; border:1px solid #eee ">
             <el-tree :data="menuData" :props="defaultProps" :filter-node-method="filterNode" @node-click="handleNodeClick" ref="tree" highlight-current></el-tree>
@@ -132,7 +123,6 @@ export default {
     dataGet:[],
     centers:[],
     global_index: 0,
-    activeIndex:'',
     editableTabs: [],
     menuData: [ ],
     tableData:[ ],
@@ -180,11 +170,9 @@ export default {
   },
 
   created() {
-    console.log(typeof(this.$store.getters.center_id));
+    // console.log(typeof(this.$store.getters.center_id)); --> 为number
     this.getTarget();
-    this.activeIndex = (this.$store.getters.center_id).toString();
-    getKeywordTree({"center_id": this.$store.getters.center_id}).then(response => {
-    this.menuData = response.data;})
+    this.centerClick(this.$store.getters.center_id);
   },
 
   methods:{
@@ -251,7 +239,7 @@ export default {
       return this.articleText;
     },
 
-    centerSelect(centerId){
+    centerClick(centerId){
       getKeywordTree({"center_id":Number(centerId)}).then(response => {
         this.menuData = response.data;})
     }, 
