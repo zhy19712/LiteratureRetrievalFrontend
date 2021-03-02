@@ -97,7 +97,7 @@
           <iframe v-show="isHtml" :src="getArticle(editableTabs[global_index].id)" frameborder="0" width="100%" height="90%" padding="-10px"></iframe>
           <div v-show="isText">
             <el-header class="header" style="text-align:left; font-size: 12px; margin-bottom: -15px;">{{editableTabs.length > 0 ? 'Title: ' + editableTabs[global_index].name : ''}}</el-header>
-            <el-main class="text" style="text-align:left; height:400px; font-size: 12px; margin-bottom: 10px;">{{editableTabs.length > 0 ? editableTabs[global_index].text : ''}}</el-main>
+            <el-main class="text" style="text-align:left; height:75%; font-size: 12px; margin-bottom: 10px;">{{editableTabs.length > 0 ? editableTabs[global_index].text : ''}}</el-main>
           </div>
         </el-main>
         </el-container>
