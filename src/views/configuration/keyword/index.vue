@@ -6,8 +6,8 @@
 	  <el-header> 
 	  <div class="head">
 		  <el-form :inline="true" :model="formInline_select_center" class="demo-form-inline">	 
-		    <el-form-item label="中心选择">			  
-			  <el-select v-model="formInline_select_center.center" placeholder="请选择中心" @change="changeCenter()">
+		    <el-form-item label="您所在中心">			  
+			  <el-select v-model="formInline_select_center.center" :placeholder="default_Center" @change="changeCenter()">
 			      <el-option
 			        v-for="item in centers"
 			        :key="item.id"
@@ -22,45 +22,26 @@
 	  </el-header>
 	  
 	  <el-container>
-		        <el-aside width="300px">
+		        <el-aside width="350px" >
 				<br/>
 				<el-row :gutter="20">
 					<el-col :span="10"><el-input  v-model="category_item.category" placeholder="请输入要添加的分类名称"></el-input></el-col>
 					<el-button type="primary" @click="add_category_Item" class="add-btn" plain>添加分类</el-button>
 				</el-row>
-
-				
 				 <el-table
 									     ref="singleTable"
 				 						 :data="Tabledata_categories_in_a_center"
 										 highlight-current-row
 										 @current-change="handleCurrentChange"
 				 						 style="width: 100%"
-										 :row-class-name="tableRowClassName"
-										 max-height="500">
+										 max-height="450">
 				 						 <el-table-column
 				 											   prop="category"
 				 											   label="分类"
 				 											    width="110"
 				 											   >
 				 						 </el-table-column>
-				 						 <!--el-table-column
-				 											   prop="center_id"
-				 											   label="中心id"
-				 											   width="180">
-				 						 </el-table-column-->
-				 						 <!--el-table-column
-				 												prop="id"
-				 												label="分类id"
-				 												 width="80"
-				 												>
-				 						 </el-table-column> -->
-										 <!--el-table-column prop="remark" label="查询关键字按钮">
-										     <template slot-scope="scope">
-										         <el-button type="primary"  @click="fetch_keywords_by_categoryid_click(scope.row,scope.$index)" circle></el-button>
-										     </template>
-										 </el-table-column-->
-										 
+
 										 <el-table-column prop="remark" label="操作">
 										     <template slot-scope="scope">
 										         <el-button type="primary" icon="el-icon-edit" @click="edit_category_Item(scope.row,scope.$index)" circle></el-button>
@@ -96,7 +77,7 @@
 					
 			    </el-row>
 				
-	           <el-table :data="Tabledata_keywords_by_categoryid" style="width: 90%"  max-height="500">
+	           <el-table :data="Tabledata_keywords_by_categoryid" style="width: 90%"  max-height="450">
 	               <el-table-column label="表格序号" width="200"><template slot-scope="scope"> {{scope.$index + 1 }} </template></el-table-column>
 	     		  
 				  <!--el-table-column prop="id" label="ID" width="200"></el-table-column-->
@@ -183,11 +164,11 @@
 	    return {
 		  //头部	
 		  centers:null,
+		  default_Center:null,
 		  
 		  formInline_select_center: {
 		            center: ''},
 					
-
 		
 		  //左表
 		  category_item:{
@@ -224,6 +205,7 @@
 		  
 	  created() { 
 		  this.get_center_names();
+		  this.get_IT_categories_first();
 
 	  },
 	  methods: { //方法函数的排列方式, 也按照页面的位置？	
@@ -233,6 +215,7 @@
 		this.listLoading = true
 				  fetchCenter_API().then(response => {
 					this.centers = response.data	
+					this.default_Center = this.centers[this.$store.getters.center_id-1].center
 					this.listLoading = false 
 													console.log("this.centers",this.centers)
 													//console.log("this.Tabledata_categories_in_a_center",this.Tabledata_categories_in_a_center)						  		  
@@ -247,6 +230,15 @@
 								  		    this.listLoading = false  })
 	    				 
 	  },//change
+	 get_IT_categories_first(){
+		 this.Row_clicked = null,
+		 this.Tabledata_keywords_by_categoryid = null,
+		 this.listLoading = true
+		 		  fetchCategory_by_center_API({"center_id":1}).then(response => {
+		 		    this.Tabledata_categories_in_a_center = response.data	
+		 		    this.listLoading = false })
+
+	 },
 		  
 /*------------------------下面body的部分-----------------------------------*/			
 		/*-------------左侧表格------------*/	
@@ -334,16 +326,7 @@
 			
 		   
 		},//confirm_category
-		
-		tableRowClassName({row, rowIndex}) {
-			  
-			  //this.Row_clicked = 3
-              if (rowIndex === this.Row_clicked) {
-		          return 'success-row';
-		        }
-		        return '';
-		      },
-		
+
 		handleCurrentChange(val) {
 		  console.log("handleCurrentChange(val)",val)
 		  if (val) {
@@ -356,20 +339,9 @@
 			    this.listLoading = false})		
 			  
 		  }
-  
-			
+ 
 		},
-		/*
-		fetch_keywords_by_categoryid_click(row,idx){	
-					  this.Row_clicked = idx
-					  this.category_clicked_in_left_table = row.id
-					  this.listLoading = true
-					  fetchKeyword_filter_API({"category_id":row.id}).then(response => {
-					    this.Tabledata_keywords_by_categoryid = response.data
-					    this.listLoading = false})		  
-		},*/
-		
-		
+	
 		/*-------------右侧表格------------*/	
 		/*表头添加*/
 		add_keyword_Item(){ //this指代的谁？？？？这个页面组件么
@@ -434,23 +406,7 @@
 			
 			this.dialogVisible_keyword_table = true;
 		},
-		/*
-		editUser(item,idx){
-		     console.log("看一下item是什么");
-		     console.log(item);
-			 
-		     this.userIndex = idx;
-		     this.editObj = {
-		         url: item.url,
-		         name: item.name,
-		         type: item.type,
-				 status:item.status,
-		         remark: item.remark,
-		     };
-		     this.dialogVisible = true;
-		},//editUser
-		*/
-		
+	
 		confirm_keyword(){
 			this.dialogVisible_keyword_table = false;
 			
@@ -464,26 +420,14 @@
 			}
 			console.log("edit_data",edit_data)
 			editKeyword_API(edit_data)
-			/*
-			editKeyword_API({
-				"id":this.Tabledata_keywords_by_categoryid[this.keyword_table_Index]["id"],
-			     //"category_id":this.editObj.category_id,
-				 "keyword":this.keyword_item.keyword,
-				 "type":"1"})//this.editObj.type 
-			*/
-			Vue.set(this.Tabledata_keywords_by_categoryid, this.keyword_table_Index, this.keyword_item);		 
-			
-			/*
-			editKeyword_API({"id":this.tableData[this.userIndex]["id"],"category_id":this.editObj.category_id,"keyword":this.editObj.keyword,"type":this.editObj.type})
-			
-			*/
-		   
+
+			Vue.set(this.Tabledata_keywords_by_categoryid, this.keyword_table_Index, edit_data);		 
+
 		},//confirm_keyword
 		
 		changeStatus(row) {
-		  console.log("changeStatus函数")
-		  console.log(row)
-		  console.log(row.status)
+		  //console.log(row)
+		  //console.log(row.status)
 		  
 		  change_Keyword_Status_API(row).then(response => {
 		    console.log(response)
@@ -494,10 +438,7 @@
 			
 		  
 		}//export default
-				
-				
-				
-				
+						
 </script>
 
 
