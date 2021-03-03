@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container" style="height:670px; width:100%;">
+  <div class="app-container" style="height:670px; width:100%; min-width:1295px">
     <el-container  style="height:10%; background-color: #247CDA; width:100%;">
       <el-menu
       :default-active="activeIndex"
@@ -52,7 +52,7 @@
                  type="daterange"
                  range-separator="至"
                  start-placeholder="开始日期"
-                end-placeholder="结束日期">
+                 end-placeholder="结束日期">
 		            </el-date-picker>
               </el-col>
               <el-col :span="4">
@@ -74,8 +74,10 @@
           highlight-current-row
           @current-change="handleCurrentChange"  
           @row-click="handleRowClick" 
-          border style="width:100%; max-height=70%"  >
-            <el-table-column prop='title' label="标题" width="200px" height="40px">
+          border 
+          :header-cell-style="{background:'#247CDA', color:'#90E1FF'}"
+          style="width:100%; max-height=70%"  >
+            <el-table-column prop='title' label="标题" width="200px" height="40px" style="color">
               <template slot-scope="scope">
                  <span class="col-cont" v-html="showData(scope.row.title)"></span>
                </template>
@@ -108,7 +110,7 @@
               <el-main v-if="editableTabs.length > 0" style="height:500px;padding:0">
                 <iframe v-show="isHtml" :src="getArticle(editableTabs[global_index].id)" frameborder="0" width="100%" height="90%" padding="-10px" ></iframe> 
                 <div v-show="isText" style="height:90%">
-                  <el-header class="header" style="text-align:left; height:15%; font-size: 12px; margin-bottom: -15px;">{{editableTabs.length > 0 ? 'Title: ' + editableTabs[global_index].name : ''}}</el-header>
+                  <el-header class="header" style="text-align:left; height:10%; font-size: 12px; margin-bottom: -15px;">{{editableTabs.length > 0 ? 'Title: ' + editableTabs[global_index].name : ''}}</el-header>
                   <el-main class="text" style="text-align:left; height:85%; font-size: 12px; margin-bottom: 10px;">{{editableTabs.length > 0 ? editableTabs[global_index].text : ''}}</el-main>
                 </div>
               </el-main>
@@ -189,12 +191,11 @@ export default {
     this.getTarget();
     this.activeIndex = (this.$store.getters.center_id).toString();
     getKeywordTree({"center_id": this.$store.getters.center_id}).then(response => {
-    this.menuData = response.data;
-    //获取当前目录的首个keyword_id，之后发出table的获取申请并显示
-    var _keyword_id = (((this.menuData[0]).children)[0].keyword_id);
-    getArticleTable({"page": 1, "size":1000, "keyword_id":_keyword_id}).then(response => {
-      this.tableData = response.data;
-      })
+      this.menuData = response.data;
+      //获取当前目录的首个keyword_id，之后发出table的获取申请并显示
+      var _keyword_id = (((this.menuData[0]).children)[0].keyword_id);
+      getArticleTable({"page": 1, "size":1000, "keyword_id":_keyword_id}).then(response => {
+        this.tableData = response.data;})
     });
   },
 
