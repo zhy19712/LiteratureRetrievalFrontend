@@ -183,12 +183,19 @@ export default {
 
   },
 
+  //created: 在模板渲染成html前调用，即通常初始化某些属性值，然后再渲染成视图。
   created() {
-    console.log(typeof(this.$store.getters.center_id));
+    //初始化界面时，获取对应当前中心并展示
     this.getTarget();
     this.activeIndex = (this.$store.getters.center_id).toString();
     getKeywordTree({"center_id": this.$store.getters.center_id}).then(response => {
-    this.menuData = response.data;});
+    this.menuData = response.data;
+    //获取当前目录的首个keyword_id，之后发出table的获取申请并显示
+    var _keyword_id = (((this.menuData[0]).children)[0].keyword_id);
+    getArticleTable({"page": 1, "size":1000, "keyword_id":_keyword_id}).then(response => {
+      this.tableData = response.data;
+      })
+    });
   },
 
   methods:{
@@ -268,7 +275,7 @@ export default {
       var keywordID = data.keyword_id;
 
       //初始化显示第一页内容
-      getArticleTable({"page": 1, "size":10, "keyword_id":keywordID}).then(response => {
+      getArticleTable({"page": 1, "size":1000, "keyword_id":keywordID}).then(response => {
         this.tableData = response.data;
         })
     },
