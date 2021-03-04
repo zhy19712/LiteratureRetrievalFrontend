@@ -18,7 +18,7 @@ export function getKeywordTree(data) {
 export function getArticleTable(data) {
   return request({
     url:'/article',
-    method: 'put',
+    method: 'post',
     data
   })
 }
