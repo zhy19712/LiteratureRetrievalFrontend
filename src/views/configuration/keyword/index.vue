@@ -7,7 +7,7 @@
 	  <div class="head">
 		  <el-form :inline="true" :model="formInline_select_center" class="demo-form-inline">	 
 		    <el-form-item label="您所在中心">			  
-			  <el-select v-model="formInline_select_center.center" :placeholder="default_Center" @change="changeCenter()">
+			  <el-select v-model="formInline_select_center.center" :placeholder="default_Center" disabled @change="changeCenter()">
 			      <el-option
 			        v-for="item in centers"
 			        :key="item.id"
@@ -24,13 +24,15 @@
 	  <el-container>
 		        <el-aside width="350px" >
 				<br/>
-				<el-row :gutter="20">
-					<el-col :span="10"><el-input  v-model="category_item.category" placeholder="请输入要添加的分类名称"></el-input></el-col>
+				<el-row :gutter="30">
+					<el-col :span="15"><el-input  v-model="category_add_item.category" placeholder="请输入要添加的分类名称"></el-input></el-col>
 					<el-button type="primary" @click="add_category_Item" class="add-btn" plain>添加分类</el-button>
 				</el-row>
+				 <br/>
 				 <el-table
 									     ref="singleTable"
 				 						 :data="Tabledata_categories_in_a_center"
+										 border
 										 highlight-current-row
 										 @current-change="handleCurrentChange"
 				 						 style="width: 100%"
@@ -42,7 +44,7 @@
 				 											   >
 				 						 </el-table-column>
 
-										 <el-table-column prop="remark" label="操作">
+										 <el-table-column prop="remark" label="操作" >
 										     <template slot-scope="scope">
 										         <el-button type="primary" icon="el-icon-edit" @click="edit_category_Item(scope.row,scope.$index)" circle></el-button>
 										         <el-button type="danger" icon="el-icon-delete" @click="del_category_Item(scope.$index)" circle></el-button>
@@ -65,19 +67,19 @@
 									   
 				</el-aside>
 				
-			   <el-container>	
+			 
 			   <el-main>
 				
-			    <el-row :gutter="20">
+			    <el-row :gutter="40">
 					
-			    	<el-col :span="10"><el-input  v-model="keyword_item.keyword"  placeholder="请输入关键字"></el-input></el-col>
+			    	<el-col :span="15"><el-input  v-model="keyword_add_item.keyword"  placeholder="请输入关键字"></el-input></el-col>
 			    	<!--el-col :span="10"><el-input  v-model="keyword_item.type"  placeholder="请输入类型"></el-input></el-col-->
 					
 					<el-button type="primary" @click="add_keyword_Item" class="add-btn" plain >添加关键字</el-button>  <!--style="width: 90%"-->
 					
 			    </el-row>
-				
-	           <el-table :data="Tabledata_keywords_by_categoryid" style="width: 90%"  max-height="450">
+			   <br/>
+	           <el-table :data="Tabledata_keywords_by_categoryid" border style="width: 90%"  max-height="450">
 	               <el-table-column label="表格序号" width="200"><template slot-scope="scope"> {{scope.$index + 1 }} </template></el-table-column>
 	     		  
 				  <!--el-table-column prop="id" label="ID" width="200"></el-table-column-->
@@ -130,8 +132,8 @@
 			    </span>
 			</el-dialog>
 			   
-				</el-main>				   
-				</el-container>
+		</el-main>				   
+				
 
 	  
 	  </el-container>
@@ -171,6 +173,11 @@
 					
 		
 		  //左表
+		  category_add_item:{
+		  						category_id:'',
+		  						center_id:'',
+								category: '',
+		  			},
 		  category_item:{
 						category_id:'',
 						center_id:'',
@@ -189,6 +196,11 @@
 		  Row_clicked:null,
 		  
 		  //右表
+		  keyword_add_item:{
+		  						category_id:'',
+		  				keyword:'',
+		  			    type: '',
+		  			},
 		  keyword_item:{
 						category_id:'',
 		  				keyword:'',
@@ -205,7 +217,7 @@
 		  
 	  created() { 
 		  this.get_center_names();
-		  this.get_IT_categories_first();
+		  this.get_categories_first();
 
 	  },
 	  methods: { //方法函数的排列方式, 也按照页面的位置？	
@@ -230,11 +242,11 @@
 								  		    this.listLoading = false  })
 	    				 
 	  },//change
-	 get_IT_categories_first(){
+	 get_categories_first(){
 		 this.Row_clicked = null,
 		 this.Tabledata_keywords_by_categoryid = null,
 		 this.listLoading = true
-		 		  fetchCategory_by_center_API({"center_id":1}).then(response => {
+		 		  fetchCategory_by_center_API({"center_id":this.$store.getters.center_id}).then(response => {
 		 		    this.Tabledata_categories_in_a_center = response.data	
 		 		    this.listLoading = false })
 
@@ -246,23 +258,26 @@
 		add_category_Item(){ //this指代的谁？？？？这个页面组件么
 			console.log("添加一个分类")
 		    
-		    if(!this.category_item.category){
+		    if(!this.category_add_item.category){
 		        this.$message({
 		            message: '请输入分类的名字', //这个warning只能从页面的中间弹出么？
 		            type: 'warning'
 		        });
 		        return;
 		    }
-			this.category_item.center_id = this.formInline_select_center.center
-			this.Tabledata_categories_in_a_center.push(this.category_item);
-			postCategory_API({"center_id" : this.category_item.center_id, "category":this.category_item.category})
-			this.category_item = {
+			//this.category_add_item.center_id = this.formInline_select_center.center
+			//this.Tabledata_categories_in_a_center.push(this.category_add_item);
+			
+			postCategory_API({"center_id" : this.$store.getters.center_id, "category":this.category_add_item.category}).then(response => {
+						this.get_categories_first()
+						})
+			this.category_add_item = {
 				center_id:'',
 				category:'',
 			}
 		},//add_category
 		
-		/*表体*/
+		/*表体* 这部分改为在handle current change中*/
 		fetch_keywords_by_categoryid_click(row,idx){	
 					  this.Row_clicked = idx
 					  this.category_clicked_in_left_table = row.id
@@ -277,11 +292,14 @@
 		  //console.log("进入删除程序")
 			this.$confirm('确认删除此分类信息？')
 				.then(_ => {
-							  var del_data = {"id":this.Tabledata_categories_in_a_center[idx]["id"]}
-							  console.log("分类删除del_data",del_data)					  
+							  var del_id = {"id":this.Tabledata_categories_in_a_center[idx]["id"]}
+							  console.log("分类删除del_id",del_id)					  
 		            this.Tabledata_categories_in_a_center.splice(idx, 1); //此处是重点难点，分析vue源码有帮助与理解
-					delete_category_API(del_data)
+					//在这里补充一个，右表中删除分类的函数
+					//delete_category_in_keyword_table(del_id)
+					delete_category_API(del_id)
 					  //deleteKeyword_API(del_data)
+					  
 		        })
 				.catch(_ => {})   
 		},
@@ -330,24 +348,30 @@
 		handleCurrentChange(val) {
 		  console.log("handleCurrentChange(val)",val)
 		  if (val) {
-			  this.currentRow = val;
+			  //this.currentRow = val;
 			  
 			  this.category_clicked_in_left_table = val.id
-			  this.listLoading = true
-			  fetchKeyword_filter_API({"category_id":val.id}).then(response => {
-			    this.Tabledata_keywords_by_categoryid = response.data
-			    this.listLoading = false})		
+			  this.fetch_keywords_by_categoryid(val.id)
 			  
 		  }
  
 		},
+		
+		fetch_keywords_by_categoryid(categoryid){
+			this.listLoading = true
+			fetchKeyword_filter_API({"category_id":categoryid}).then(response => {
+			  this.Tabledata_keywords_by_categoryid = response.data
+			  this.listLoading = false})	
+			
+		},
+		
 	
 		/*-------------右侧表格------------*/	
 		/*表头添加*/
 		add_keyword_Item(){ //this指代的谁？？？？这个页面组件么
 			console.log("添加一个关键字")
 		    
-		    if(!this.keyword_item.keyword){
+		    if(!this.keyword_add_item.keyword){
 		        this.$message({
 		            message: '请输入关键字的名字', //这个warning只能从页面的中间弹出么？
 		            type: 'warning'
@@ -364,13 +388,19 @@
 			}*/
 			
 			//this.category_item.center_id = this.formInline_select_center.center
-			this.keyword_item.category_id = this.category_clicked_in_left_table
-			this.Tabledata_keywords_by_categoryid.push(this.keyword_item);
+			this.keyword_add_item.category_id = this.category_clicked_in_left_table
+			this.keyword_add_item.status = 1
 			
-			postKeyword_API({"category_id":this.keyword_item.category_id,"keyword":this.keyword_item.keyword,"type":"1","status":"1"}) //this.category_clicked_in_left_table
+			//this.Tabledata_keywords_by_categoryid.push(this.keyword_add_item);
+			
+			postKeyword_API({"category_id":this.keyword_add_item.category_id,"keyword":this.keyword_add_item.keyword,"type":"1","status":"1"}).then(response => {
+		    console.log("重新获取右表")
+			console.log("分类id",this.category_clicked_in_left_table) //this.keyword_add_item.category_id竟然为null??
+			this.fetch_keywords_by_categoryid(this.category_clicked_in_left_table)
+		  })  //this.category_clicked_in_left_table
 			//postKeyword_API({"center_id" : this.category_item.center_id, "category":this.category_item.category})
 			
-			this.keyword_item = {
+			this.keyword_add_item = {
 				//category_id:'',
 				keyword:'',
 				type:'',
