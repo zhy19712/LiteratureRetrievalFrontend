@@ -1,49 +1,35 @@
 <template>
-  <div class="app-container" style="height:670px; width:100%; min-width:1295px">
-    <el-container  style="height:10%; background-color: #247CDA; width:100%;">
-      <el-menu
-      :default-active="activeIndex"
-      class="center-menu"
-      mode="horizontal"
-      @select="centerSelect"
-      background-color="#247CDA"
-      text-color="#90E1FF"
-      active-text-color="#fff">
-        <el-menu-item v-for="(item, center_index) in centers" :key="'Center' + center_index" :index="item.id.toString()" >
-          {{ item.center }}
-        </el-menu-item>
-      </el-menu>
-    </el-container>
+  <div class="app-container" style="height:670px; width:100%;">
+    <!-- <el-row :gutter="5">
+      <el-col :span="16" :offset=4> -->
+        <!-- 显示各个中心 -->
+    <el-row :gutter="20">
+      <el-col el-col :span="20"  style="width:100%; text-align:left; min-width:805px">
+        <el-button type="primary" v-for="(item, index) in centers" :key="'Center' + index"  size="small" @click="centerClick(item.id)">{{ item.center }}</el-button>
+        <br><br>
+      </el-col>
+    </el-row>
 
-    <el-container style="height:90%; width:100%;">
+  <el-container style="height:620px; width:100%;">
       <!-- 边-显示来源（menu） -->
-      <el-aside class="menu-aside" width="250px" height = "80%"  style="border:1px solid #eee">
+      <el-aside class="menu-aside" width="250px"  style=" border:1px solid #eee">
         <el-container>
-          <el-header style="padding:10px; border:1px solid #eee;">
-            <el-input v-model="filter_text" placeholder="关键字过滤" clearable maxlength="2000" />
+          <el-header style=" border:1px; padding:5px;">
+            <el-input v-model="filter_text" placeholder="输入关键字进行过滤" clearable maxlength="2000" />
           </el-header>
-          <el-main style="height:75%; border:1px solid #eee ">
-            <el-tree 
-            :data="menuData" 
-            :props="defaultProps" 
-            :filter-node-method="filterNode" 
-            default-expand-all
-            @node-click="handleNodeClick" 
-            ref="tree" highlight-current>
-            </el-tree>
+          <el-main style="height:500px; border:1px solid #eee ">
+            <el-tree :data="menuData" :props="defaultProps" :filter-node-method="filterNode" @node-click="handleNodeClick" ref="tree" highlight-current></el-tree>
           </el-main>
         </el-container>
       </el-aside>
       <!-- 显示相关的表格和正文 -->
-      <el-container style="height:90%">
+      <el-container >
           <el-header :gutter="2"  style="padding:10px; border:1px solid #eee">
             <el-col :span="3">
               <el-input v-model="filter_table" placeholder="表格过滤" clearable maxlength="2000" style="" />
             </el-col>
-            <el-col :span="15" offset="1" class='global_search_div' style=" min-width:600px;height:43px; border:2px solid #eee">
-              <el-col :span="5">
-                <p style="text-align:center; height:40px; margin:10px">全文章搜索</p>
-              </el-col>
+            <el-col :span="15" offset="1" class='global_search_div' style="border:1px solid ">
+              <el-col :span="4"  style="text-align:center; height:40px"><p>全文章搜索 </p></el-col>
               <el-col  :span="12">
                 <el-date-picker 
 		             v-model="search_data"
@@ -52,7 +38,7 @@
                  type="daterange"
                  range-separator="至"
                  start-placeholder="开始日期"
-                 end-placeholder="结束日期">
+                end-placeholder="结束日期">
 		            </el-date-picker>
               </el-col>
               <el-col :span="4">
@@ -64,30 +50,28 @@
               </el-col>
             </el-col>
             
-            <el-col v-if="editableTabs.length > 0" :span="3" :offset="1"> 
+            <el-col v-if="editableTabs.length > 0" :span="4" :offset="1"> 
               <el-button  icon="el-icon-sort" @click="switchMain" style="margin-left: 8px">{{message}}</el-button>
             </el-col>
           </el-header>
-        <el-container style="height:99%;">
-        <el-aside class="table-aside"  width="402px"  style="max-height=70%; border:1px">
+        <el-container style="height:550px">
+        <el-aside class="table-aside"  width="402px"  style=" border:1px">
           <el-table :data="tables" 
           highlight-current-row
           @current-change="handleCurrentChange"  
           @row-click="handleRowClick" 
-          border 
-          :header-cell-style="{background:'#247CDA', color:'#90E1FF'}"
-          style="width:100%; max-height=70%"  >
-            <el-table-column prop='title' label="标题" width="200px" height="40px" style="color">
+          border style="width:100%;"  max-height="500px">
+            <el-table-column prop='title' label="标题" width="200px">
               <template slot-scope="scope">
                  <span class="col-cont" v-html="showData(scope.row.title)"></span>
                </template>
            </el-table-column>
-           <el-table-column prop='time' label="日期" width="100px" height="40px">
+           <el-table-column prop='time' label="日期" width="100px">
              <template slot-scope="scope">
                 <span class="col-cont" v-html="showData(dateFormat(scope.row.time))"></span>
               </template>
             </el-table-column>
-            <el-table-column prop='target' label="来源" width="100px" height="40px">
+            <el-table-column prop='target' label="来源" width="100px">
               <template slot-scope="scope">
                <span class="col-cont" v-html="showData(scope.row.target)"></span>
              </template>
@@ -95,10 +79,10 @@
           </el-table>
         </el-aside>
 
-        <el-container style="width:100%; height:90%; border:1px solid #eee">
+        <el-container style="width:100%; border:1px solid #eee">
         <!-- 文献栏位--可用el-动态编辑标签 -->
-          <el-tabs class="header" v-model="editableTabsValue"  type="card" closable @tab-click="handleTabClick" @tab-remove="handleTabClose" 
-          style="height:15%;width:100%;">
+        <el-header :gutter="20" style="font-size: 12px;  border:1px；height:50px;">
+          <el-tabs class="header" v-model="editableTabsValue" type="card" closable @tab-click="handleTabClick" @tab-remove="handleTabClose">
             <el-tab-pane
               :key="tab.name"
               v-for="tab in editableTabs"
@@ -106,15 +90,16 @@
               :name="tab.name"
             >
             </el-tab-pane>
-              <!-- 正文显示-- -->
-              <el-main v-if="editableTabs.length > 0" style="height:500px;padding:0">
-                <iframe v-show="isHtml" :src="getArticle(editableTabs[global_index].id)" frameborder="0" width="100%" height="90%" padding="-10px" ></iframe> 
-                <div v-show="isText" style="height:90%">
-                  <el-header class="header" style="text-align:left; height:10%; font-size: 12px; margin-bottom: -15px;">{{editableTabs.length > 0 ? 'Title: ' + editableTabs[global_index].name : ''}}</el-header>
-                  <el-main class="text" style="text-align:left; height:85%; font-size: 12px; margin-bottom: 10px;">{{editableTabs.length > 0 ? editableTabs[global_index].text : ''}}</el-main>
-                </div>
-              </el-main>
           </el-tabs>
+        </el-header>
+          <!-- 正文显示-- -->
+        <el-main v-if="editableTabs.length > 0" style="height:450px; padding:0">
+          <iframe v-show="isHtml" :src="getArticle(editableTabs[global_index].id)" frameborder="0" width="100%" height="90%" padding="-10px"></iframe>
+          <div v-show="isText">
+            <el-header class="header" style="text-align:left; font-size: 12px; margin-bottom: -15px;">{{editableTabs.length > 0 ? 'Title: ' + editableTabs[global_index].name : ''}}</el-header>
+            <el-main class="text" style="text-align:left; height:400px; font-size: 12px; margin-bottom: 10px;">{{editableTabs.length > 0 ? editableTabs[global_index].text : ''}}</el-main>
+          </div>
+        </el-main>
         </el-container>
         </el-container>
       </el-container>
@@ -138,7 +123,6 @@ export default {
     dataGet:[],
     centers:[],
     global_index: 0,
-    activeIndex:'',
     editableTabs: [],
     menuData: [ ],
     tableData:[ ],
@@ -185,18 +169,10 @@ export default {
 
   },
 
-  //created: 在模板渲染成html前调用，即通常初始化某些属性值，然后再渲染成视图。
   created() {
-    //初始化界面时，获取对应当前中心并展示
+    // console.log(typeof(this.$store.getters.center_id)); --> 为number
     this.getTarget();
-    this.activeIndex = (this.$store.getters.center_id).toString();
-    getKeywordTree({"center_id": this.$store.getters.center_id}).then(response => {
-      this.menuData = response.data;
-      //获取当前目录的首个keyword_id，之后发出table的获取申请并显示
-      var _keyword_id = (((this.menuData[0]).children)[0].keyword_id);
-      getArticleTable({"page": 1, "size":1000, "keyword_id":_keyword_id}).then(response => {
-        this.tableData = response.data;})
-    });
+    this.centerClick(this.$store.getters.center_id);
   },
 
   methods:{
@@ -263,7 +239,7 @@ export default {
       return this.articleText;
     },
 
-    centerSelect(centerId){
+    centerClick(centerId){
       getKeywordTree({"center_id":Number(centerId)}).then(response => {
         this.menuData = response.data;})
     }, 
@@ -276,7 +252,7 @@ export default {
       var keywordID = data.keyword_id;
 
       //初始化显示第一页内容
-      getArticleTable({"page": 1, "size":1000, "keyword_id":keywordID}).then(response => {
+      getArticleTable({"page": 1, "size":10, "keyword_id":keywordID}).then(response => {
         this.tableData = response.data;
         })
     },
@@ -367,17 +343,11 @@ export default {
 </script>
 
 <style>
-  .el-tabs__nav-wrap {
-    /* background-color: #D3DCE6;
+  /* .el-aside {
+    background-color: #D3DCE6;
     color: #333;
-    text-align: left; */
+    text-align: left;
     margin-bottom: 0px;
-  };
-  .el-tabs__header.is-top{
-    margin-bottom: 0px;
-  };
-  
-  .el-tabs__content{
-    height: 100%;
-  }
+    line-height: 50px;
+  } */
 </style>

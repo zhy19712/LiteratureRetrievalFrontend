@@ -8,6 +8,7 @@ export function login(data) {
   })
 }
 
+
 export function getInfo(data) {
   return request({
     url: '/admin/info',
@@ -16,9 +17,44 @@ export function getInfo(data) {
   })
 }
 
+
 export function logout() {
   return request({
     url: '/admin/login',
     method: 'get'
   })
 }
+
+export function user_Center_filter_API(data) {
+  return request({
+    url: '/admin/userfilter',
+    method: 'post',
+    data
+  })
+}
+
+
+export function user_Center_Add_API(data) {
+  return request({
+    url: '/admin/user',
+    method: 'post',
+    data
+  })
+}
+
+
+export function deleteUser_API(data) {
+	return request({
+	  url: '/admin/user',
+	  method: 'delete',
+	  data
+	})
+  }
+	
+export function editUser_API(data) {
+	return request({
+	  url: '/admin/user',
+	  method: 'put',
+	  data
+	})
+  }
