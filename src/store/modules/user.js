@@ -7,7 +7,7 @@ const getDefaultState = () => {
     token: getToken(),
     name: '',
     avatar: '',
-    center_id: '',
+    center_id: 0,
   }
 }
 
@@ -38,7 +38,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
         const { data } = response
-        console.log(data)
+        // console.log(data)
         commit('SET_TOKEN', data.token)
         setToken(data.token)
         resolve()
@@ -59,7 +59,7 @@ const actions = {
         }
 
         const { name, avatar, center_id} = data
-
+        // console.log(data)
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_CENTER_ID', center_id)

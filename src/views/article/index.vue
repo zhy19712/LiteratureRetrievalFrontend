@@ -2,7 +2,7 @@
   <div class="app-container" style="height:670px; width:100%; min-width:1295px">
     <el-container  style="height:10%; background-color: #247CDA; width:100%;">
       <el-menu
-      :default-active="activeIndex"
+      :default-active= activeIndex
       class="center-menu"
       mode="horizontal"
       @select="centerSelect"
@@ -40,7 +40,7 @@
             <el-col :span="3">
               <el-input v-model="filter_table" placeholder="表格过滤" clearable maxlength="2000" style="" />
             </el-col>
-            <el-col :span="15" offset="1" class='global_search_div' style=" min-width:600px;height:43px; border:2px solid #eee">
+            <el-col :span="15" :offset="1" class='global_search_div' style=" min-width:600px;height:43px; border:2px solid #eee">
               <el-col :span="5">
                 <p style="text-align:center; height:40px; margin:10px">全文章搜索</p>
               </el-col>
@@ -56,11 +56,11 @@
 		            </el-date-picker>
               </el-col>
               <el-col :span="4">
-                <el-input v-model="global_search" placeholder="搜索关键字" clearable maxlength="2000" style="" />
+                <el-input v-model="global_search" placeholder="搜索关键字" clearable maxlength="2000"/>
               </el-col>
 
               <el-col :span="1" :offset="1"> 
-                <el-button icon="el-icon-search" circle @click="globalSearch(search_data,global_search)"></el-button>
+                <el-button icon="el-icon-search" circle @click="globalSearch(search_data,global_search)" style="min-width"></el-button>
               </el-col>
             </el-col>
             
@@ -186,16 +186,39 @@ export default {
   },
 
   //created: 在模板渲染成html前调用，即通常初始化某些属性值，然后再渲染成视图。
-  created() {
+  async created() {
     //初始化界面时，获取对应当前中心并展示
     this.getTarget();
-    this.activeIndex = (this.$store.getters.center_id).toString();
-    getKeywordTree({"center_id": this.$store.getters.center_id}).then(response => {
+    var _center_id = this.$store.getters.center_id
+    // 判断是否为admin，显示为id=1的中心数据
+    if (_center_id == 0) {
+      _center_id = 1;
+    }
+    this.activeIndex = (_center_id).toString();
+    getKeywordTree({"center_id": _center_id}).then(response => {
       this.menuData = response.data;
       //获取当前目录的首个keyword_id，之后发出table的获取申请并显示
       var _keyword_id = (((this.menuData[0]).children)[0].keyword_id);
-      getArticleTable({"page": 1, "size":1000, "keyword_id":_keyword_id}).then(response => {
-        this.tableData = response.data;})
+      getArticleTable({"page": 1, "size":1000, "keyword_id":_keyword_id}).then
+      (response => {
+        this.tableData = response.data;
+        // console.log(this.tableData);
+        //直接显示表格的第一个正文
+        var _article = this.tableData[0];
+        var _index= _article.id-1;
+        var tabLabel = _article.title
+        if(tabLabel.length > 10){
+          tabLabel = tabLabel.slice(0, 10);
+        };
+        getArticleHtml({"article_id":_article.id, "type":"text"}).then(
+          response => 
+            {this.articleText = response.data;
+              var tagIn = {name:_article.title, label:tabLabel, tabIndex:_index, text: this.articleText.text, id:_article.id};
+              //仅存1个文章所以globalindex为默认的0
+              this.editableTabs.push(tagIn);
+              this.editableTabsValue = _article.title;
+            });
+      })
     });
   },
 
@@ -218,12 +241,17 @@ export default {
     //全局搜索
     globalSearch(search_data,key){
       //search_data[s_time,e_time]数组
-      if(search_data.length == 0){
+      console.log(search_data.length);
+      if(search_data.length == 0 && key == ''){
 			    this.$message({
 				  type: 'warning',
-				  message: "请重新选择时间区间！" 
+				  message: "请选择时间区间或关键词！" 
 			  });
 		  }
+      else if (search_data.length == 0 && key != '') {
+        getGlobalSearch({"start_date":"", "end_date":"", "keyword":key}).then(
+        response =>{this.tableData = response.data;})
+      }
       else {
       getGlobalSearch({"start_date":search_data[0], "end_date":search_data[1], "keyword":key}).then(
         response =>{this.tableData = response.data;})
@@ -289,13 +317,13 @@ export default {
 
       var _index= row.id-1;
       var tabLabel = row.title
-      var _text;
+      // var _text;
 
       if(tabLabel.length > 10){
         tabLabel = tabLabel.slice(0, 10);
       };
       
-       _text = await this.getArticleText(row.id);
+      var _text = await this.getArticleText(row.id);
       
       // console.log(_text);
 
