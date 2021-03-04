@@ -391,9 +391,13 @@
 			this.keyword_add_item.category_id = this.category_clicked_in_left_table
 			this.keyword_add_item.status = 1
 			
-			this.Tabledata_keywords_by_categoryid.push(this.keyword_add_item);
+			//this.Tabledata_keywords_by_categoryid.push(this.keyword_add_item);
 			
-			postKeyword_API({"category_id":this.keyword_add_item.category_id,"keyword":this.keyword_add_item.keyword,"type":"1","status":"1"}) //this.category_clicked_in_left_table
+			postKeyword_API({"category_id":this.keyword_add_item.category_id,"keyword":this.keyword_add_item.keyword,"type":"1","status":"1"}).then(response => {
+		    console.log("重新获取右表")
+			console.log("分类id",this.category_clicked_in_left_table) //this.keyword_add_item.category_id竟然为null??
+			this.fetch_keywords_by_categoryid(this.category_clicked_in_left_table)
+		  })  //this.category_clicked_in_left_table
 			//postKeyword_API({"center_id" : this.category_item.center_id, "category":this.category_item.category})
 			
 			this.keyword_add_item = {
