@@ -59,7 +59,7 @@
                 <el-input v-model="global_search" placeholder="搜索关键字" clearable maxlength="2000"/>
               </el-col>
 
-              <el-col :span="1" > 
+              <el-col :span="1" :offset="1"> 
                 <el-button icon="el-icon-search" circle @click="globalSearch(search_data,global_search)" style="min-width"></el-button>
               </el-col>
             </el-col>
