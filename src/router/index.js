@@ -84,9 +84,9 @@ export const constantRoutes = [
     redirect: '/monitor',
     children: [{
       path: 'monitor',
-      name: '统计信息',
+      name: '修改密码',
       component: () => import('@/views/monitor/index'),
-      meta: { title: '统计信息', icon: 'dashboard' }
+      meta: { title: '修改密码', icon: 'dashboard' }
     }]
   },
 

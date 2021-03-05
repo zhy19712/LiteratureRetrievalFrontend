@@ -1,57 +1,50 @@
 <template>
   <div class="app-container">
-    <el-table :data="tableData" stripe style="width: 100%">
-      <el-table-column prop="url" label="url" width="180" />
-      <el-table-column prop="name" label="名称" />
-      <el-table-column prop="type" label="类型">
-        <template slot-scope="scope">
-          {{ scope.row.type == 1 ? '网站' : scope.row.type == 2 ?'公众号': '' }}
-        </template>
-      </el-table-column>
-      <el-table-column prop="status" label="状态">
-        <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.status"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-            :active-value="1"
-            :inactive-value="0"
-            @change="changeStatus(scope.row)"
-          />
-        </template>
-      </el-table-column>
-      <el-table-column prop="remark" label="备注" />
-    </el-table>
+    <el-row :gutter="20" style="margin-bottom: 20px;">
+      <el-col :span="6">
+        <el-input  v-model="origin_password" placeholder="原密码" clearable maxlength="2000"/>
+      </el-col>
+    </el-row>
+    <el-row :gutter="20" style="margin-bottom: 20px;">
+      <el-col :span="6">
+        <el-input v-model="new_password" placeholder="新密码"  clearable maxlength="2000"/>
+      </el-col>
+    </el-row>
+    <el-row :gutter="20" style="margin-bottom: 20px;">
+      <el-col :span="6">
+        <el-button @click="uploadNewPass" style="">确认</el-button>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
-import { fetchTarget, changeStatus } from '@/api/monitor'
+import { changePassword } from '@/api/monitor'
+
 export default {
   data() {
     return {
-      tableData: []
+      origin_password: '',
+      new_password: '',
+      data:[],
     }
   },
+
   created() {
-    this.getTarget()
   },
+
   methods: {
-    getTarget() {
-      this.listLoading = true
-      fetchTarget().then(response => {
-        this.tableData = response.data
+    uploadNewPass(){
+      var user_id = this.$store.getters.id;
+      changePassword({ "id":user_id, "password":this.origin_password, "new_password":this.new_password }).then(response => {
+        this.data = response;
+        this.$message({
+				  type: 'warning',
+				  message: "密码修改成功!" 
+			  });
       })
     },
-
-    changeStatus(row) {
-      console.log(row.status)
-
-      changeStatus(row).then(response => {
-        console.log(response)
-      })
-    }
-  }
+  },
 }
 
 </script>
