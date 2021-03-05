@@ -2,12 +2,12 @@
   <div class="app-container">
     <el-row :gutter="20" style="margin-bottom: 20px;">
       <el-col :span="6">
-        <el-input  v-model="origin_password" placeholder="原密码" clearable maxlength="2000"/>
+        <el-input  v-model="origin_password" placeholder="原密码" show-password clearable maxlength="2000"/>
       </el-col>
     </el-row>
     <el-row :gutter="20" style="margin-bottom: 20px;">
       <el-col :span="6">
-        <el-input v-model="new_password" placeholder="新密码"  clearable maxlength="2000"/>
+        <el-input v-model="new_password" placeholder="新密码" show-password  clearable maxlength="2000"/>
       </el-col>
     </el-row>
     <el-row :gutter="20" style="margin-bottom: 20px;">
