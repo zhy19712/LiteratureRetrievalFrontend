@@ -41,8 +41,8 @@
               <el-input v-model="filter_table" placeholder="表格过滤" clearable maxlength="2000" style="" />
             </el-col>
             <el-col :span="15" :offset="1" class='global_search_div' style=" min-width:600px;height:43px; border:2px solid #eee">
-              <el-col :span="5">
-                <p style="text-align:center; height:40px; margin:10px">全文章搜索</p>
+              <el-col :span="4">
+                <p style="text-align:center; height:40px; margin-top:10px">全文章搜索</p>
               </el-col>
               <el-col  :span="12">
                 <el-date-picker 
@@ -59,13 +59,16 @@
                 <el-input v-model="global_search" placeholder="搜索关键字" clearable maxlength="2000"/>
               </el-col>
 
-              <el-col :span="1" :offset="1"> 
+              <el-col :span="1" > 
                 <el-button icon="el-icon-search" circle @click="globalSearch(search_data,global_search)" style="min-width"></el-button>
               </el-col>
             </el-col>
             
-            <el-col v-if="editableTabs.length > 0" :span="3" :offset="1"> 
+            <el-col v-if="editableTabs.length > 0" :span="2" > 
               <el-button  icon="el-icon-sort" @click="switchMain" style="margin-left: 8px">{{message}}</el-button>
+            </el-col>
+            <el-col v-if="editableTabs.length > 0" :span="2" :offset="1"> 
+              <el-button icon="el-icon-close"  @click="tabsClear" style="margin-left: 8px">Tabs</el-button>
             </el-col>
           </el-header>
         <el-container style="height:99%;">
@@ -339,7 +342,10 @@ export default {
       this.global_index = indexGlobal.indexOf(_index);
   },
 
-    
+    //tabs-Clear, 令tabs数组为空
+    tabsClear(){
+      this.editableTabs = [];
+    },
     //分页tabs事件处理
     handleTabClose(targetName) {
       var _tabIndexs = this.editableTabs.map(value=>value.name);

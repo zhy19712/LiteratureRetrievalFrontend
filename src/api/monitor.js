@@ -1,6 +1,13 @@
 import request from '@/utils/request'
 
 
+export function changePassword(data) {
+	return request({
+	  url: '/admin/userfilter',
+	  method: 'put',
+	  data
+	})
+  }
 
 export function changeStatus(data) {
 	return request({
