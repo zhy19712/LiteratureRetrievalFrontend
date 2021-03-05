@@ -75,11 +75,6 @@ export const constantRoutes = [
       component: () => import('@/views/configuration/user/index'),
       meta: { title: '用户设置', icon: 'dashboard' }
     },
-		{
-		  path: 'configuration/test',
-		  component: () => import('@/views/configuration/test/index'),
-		  meta: { title: '测试设置', icon: 'dashboard' }
-		}
     ]
   },
 

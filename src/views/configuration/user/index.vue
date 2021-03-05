@@ -3,12 +3,11 @@
   <!--div class="app-container" /-->
   <div class="one-root">
 	  <el-container>
-	  <p>添加报Error但是却能正常添加..</p>
 	  <el-header> 
 	  <div class="head">
 		  <el-form :inline="true" :model="formInline_select_center" class="demo-form-inline">	 
 		    <el-form-item label="中心选择">			  
-			  <el-select v-model="formInline_select_center.center" :placeholder="default_Center" @change="changeCenter()">
+			  <el-select v-model="formInline_select_center.center" placeholder="信息技术中心" @change="changeCenter()">
 			      <el-option
 			        v-for="item in centers"
 			        :key="item.id"
@@ -88,23 +87,31 @@
 										         <el-button type="primary"  @click="fetch_keywords_by_targetid_click(scope.row,scope.$index)" circle></el-button>
 										     </template>
 										 </el-table-column-->
-										 
-										 <el-table-column prop="remark" label="操作">
+										 <el-table-column prop="remark" label="重置密码">
 										     <template slot-scope="scope">
 										         <el-button type="primary" icon="el-icon-edit" @click="edit_Click(scope.row,scope.$index)" circle></el-button>
+										         
+										     </template>
+										 </el-table-column>
+										 
+										 <el-table-column prop="remark" label="删除用户">
+										     <template slot-scope="scope">
+										         
 										         <el-button type="danger" icon="el-icon-delete" @click="del_Click(scope.$index)" circle></el-button>
 										     </template>
 										 </el-table-column>
 				 					   </el-table>
 									   
-			        <el-dialog title="密码将重置为默认密码" :visible.sync="dialogVisible_table" width="30%" :before-close="handleClose_target_table">
-			            <div>
+			        <el-dialog title="该用户密码将重置为默认密码" :visible.sync="dialogVisible_table" width="30%" :before-close="handleClose_target_table">
+			            <!--edit_item需要初始化有target字段
+						<div>
 			                <el-form ref="form" :model="edit_item" label-width="80px">
-								<!--edit_item需要初始化有target字段-->
+								
 			                    <el-form-item label="名"><el-input v-model="edit_item.username"></el-input></el-form-item>
 			        
 			                </el-form>
 			            </div>
+						-->
 			            <span slot="footer" class="dialog-footer">
 			                <el-button @click="dialogVisible_table = false">取 消</el-button>
 			                <el-button type="primary" @click="edit_confirm_Click">确 定</el-button>
@@ -201,7 +208,7 @@
 				this.listLoading = true
 						  fetchCenter_API().then(response => {
 							this.centers = response.data	
-							this.default_Center = this.centers[this.$store.getters.center_id-1].center
+							//this.default_Center = this.centers[this.$store.getters.center_id-1].center
 							this.listLoading = false 
 							
 														
@@ -209,8 +216,20 @@
 		},
 
 		get_data_first(){
+			//console.log("新获取数据")
 			this.listLoading = true
-		   user_Center_filter_API({"center_id":this.$store.getters.center_id}).then(response => {
+			
+			//console.log("没选择中心时this.formInline_select_center.center为空",this.formInline_select_center.center=='')
+			var center_id = 1
+			if(this.formInline_select_center.center==''){
+				center_id = 1
+			}
+			else{
+				center_id = this.formInline_select_center.center
+			}
+			
+			user_Center_filter_API({"center_id":center_id}).then(response => {
+		   //user_Center_filter_API({"center_id":this.$store.getters.center_id}).then(response => {
 			this.Tabledata = response.data
 			console.log("Tabledata",this.Tabledata)
 			this.listLoading = false})
@@ -240,8 +259,15 @@
 
 			//console.log("此时新添加的target",this.add_item.target)
 			//this.add_item.center_id = this.formInline_select_center.center
-		    
-			this.add_item.center_id  = this.$store.getters.center_id//this.formInline_select_center.center//this.$store.getters.center_id
+		    //console.log("没选择中心时this.formInline_select_center.center为空",this.formInline_select_center.center=='')
+		    this.add_item.center_id = 1
+		    if(this.formInline_select_center.center==''){
+		    	this.add_item.center_id = 1
+		    }
+		    else{
+		    	this.add_item.center_id = this.formInline_select_center.center
+		    }
+			//this.add_item.center_id  = this.$store.getters.center_id//this.formInline_select_center.center//this.$store.getters.center_id
 			this.add_item.status = 1
 			//this.add_item.type = 1
 			//this.add_item.remark = null
@@ -251,9 +277,27 @@
 			//Vue.set(this.Tabledata, 9, this.add_item);
 			console.log("center_id",this.add_item.center_id)
 			console.log("username",this.add_item.username)
+			console.log("添加用户")
 			user_Center_Add_API({"center_id":this.add_item.center_id,"username":this.add_item.username}).then(response => {
-						this.get_data_first()
-						})
+				    console.log("response.data",response.data)
+					//this.get_data_first()
+					
+					var center_id = 1
+								if(this.formInline_select_center.center==''){
+									center_id = 1
+								}
+								else{
+									center_id = this.formInline_select_center.center
+								}
+								
+								user_Center_filter_API({"center_id":center_id}).then(response => {
+					//user_Center_filter_API({"center_id":this.$store.getters.center_id}).then(response => {
+								this.Tabledata = response.data
+								console.log("Tabledata",this.Tabledata)
+								this.listLoading = false})
+								
+								
+					})
 			//postTarget_API({ "center_id" :this.formInline_select_center.center, "target":this.add_item.target,"type":"1","remark":null,"status":"1"})
 			//改成当前页面所属中心
 			
@@ -274,7 +318,7 @@
 		del_Click(idx){ //与confirm配合
 		  //var idx_table = idx+1
 		  //console.log("进入删除程序")
-			this.$confirm('确认删除此信息？')
+			this.$confirm('确认删除此用户？')
 				.then(_ => {
 					console.log("删除代码")
 					var del_id = {"id":this.Tabledata[idx]["id"]}
@@ -320,11 +364,13 @@
 		
 		changeCenter() {
 		  this.listLoading = true
-		  		  fetchTarget_by_center_API({"center_id":this.formInline_select_center.center}).then(response => {
+		  		  user_Center_filter_API({"center_id":this.formInline_select_center.center}).then(response => {
 		  			this.Tabledata = response.data
+					console.log("重选center中的tabledata",this.Tabledata)
+					this.get_data_first()
 		  			this.listLoading = false
 		  
-		         console.log("targtes",this.Tabledata)
+		         //console.log("targtes",this.Tabledata)
 		  				  })
 		},//change
 		
