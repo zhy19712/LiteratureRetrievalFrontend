@@ -6,8 +6,8 @@
 	  <el-header> 
 	  <div class="head">
 		  <el-form :inline="true" :model="formInline_select_center" class="demo-form-inline">	 
-		    <el-form-item label="您所在中心">			  
-			  <el-select v-model="formInline_select_center.center" :placeholder="default_Center" disabled @change="changeCenter()">
+		    <el-form-item >			  
+			  <el-select v-model="formInline_select_center.center" :placeholder="default_Center" :disabled="select_disable_or_not" @change="changeCenter()">
 			      <el-option
 			        v-for="item in centers"
 			        :key="item.id"
@@ -72,7 +72,7 @@
 				
 			    <el-row :gutter="40">
 					
-			    	<el-col :span="15"><el-input  v-model="keyword_add_item.keyword"  placeholder="请输入关键字"></el-input></el-col>
+			    	<el-col :span="5"><el-input  v-model="keyword_add_item.keyword"  :disabled="left_table_clicked_or_not" placeholder="请输入关键字"></el-input></el-col>
 			    	<!--el-col :span="10"><el-input  v-model="keyword_item.type"  placeholder="请输入类型"></el-input></el-col-->
 					
 					<el-button type="primary" @click="add_keyword_Item" class="add-btn" plain >添加关键字</el-button>  <!--style="width: 90%"-->
@@ -167,6 +167,9 @@
 		  //头部	
 		  centers:null,
 		  default_Center:null,
+		  //center_id :1,
+		  select_disable_or_not:this.$store.getters.center_id!=0,
+		  
 		  
 		  formInline_select_center: {
 		            center: ''},
@@ -186,6 +189,8 @@
 		  Tabledata_categories_in_a_center:null,
 		  
 		  category_clicked_in_left_table:null,
+		  
+		  //left_table_clicked_or_not: this.category_clicked_in_left_table==null,
 		  
 		  
 		  edit_category_Row:null ,
@@ -216,11 +221,46 @@
 		  
 		  
 	  created() { 
-		  this.get_center_names();
+		  //this.get_center_names();
+		  this.select_form_init();
+		  //this.get_data_first();
 		  this.get_categories_first();
 
 	  },
+	  computed: {
+	        left_table_clicked_or_not: function() {
+				if(this.category_clicked_in_left_table==null){
+					return true
+				}
+				else{
+					return false
+				}
+	        }
+	      
+	    },
+	  
 	  methods: { //方法函数的排列方式, 也按照页面的位置？	
+	  
+	  select_form_init(){
+	  		this.listLoading = true
+	  				  fetchCenter_API().then(response => {
+	  					this.centers = response.data	
+	  					console.log("this.centers",this.centers)
+	  					
+	  					if(this.$store.getters.center_id==0){
+	  						//console.log("这是管理员")
+	  						this.default_Center = "信息技术中心"
+	  					}
+	  					else{
+	  						console.log("获取普通用户的中心")
+	  						this.default_Center = this.centers[this.$store.getters.center_id-1].center
+	  					}
+	  					
+	  					//this.default_Center = this.centers[this.$store.getters.center_id-1].center
+	  					this.listLoading = false 
+	  												
+	  		})//then
+	  },
 /*------------------------最上面header的位置----------------------------------*/		
 			  
 	  get_center_names(){
@@ -243,10 +283,26 @@
 	    				 
 	  },//change
 	 get_categories_first(){
-		 this.Row_clicked = null,
-		 this.Tabledata_keywords_by_categoryid = null,
+		 this.Row_clicked = null
+		 this.Tabledata_keywords_by_categoryid = null
+		 
+		 
+		 //var center_id = 1 这个位置为什么不能写var????????????????????
+		 var center_id = 1
+		 if(this.$store.getters.center_id==0){
+		 	//console.log("查看管理员默认情况下的中心选择",this.formInline_select_center.center)
+		 	center_id = this.formInline_select_center.center
+		 	//管理员没有选择任何中心时候，默认插入信息中心
+		 	if(center_id==''){
+		 		center_id=1
+		 	}
+		 }
+		 else{
+		 	center_id  = this.$store.getters.center_id
+		 }
+		 
 		 this.listLoading = true
-		 		  fetchCategory_by_center_API({"center_id":this.$store.getters.center_id}).then(response => {
+		 		  fetchCategory_by_center_API({"center_id":center_id}).then(response => {
 		 		    this.Tabledata_categories_in_a_center = response.data	
 		 		    this.listLoading = false })
 
@@ -268,8 +324,41 @@
 			//this.category_add_item.center_id = this.formInline_select_center.center
 			//this.Tabledata_categories_in_a_center.push(this.category_add_item);
 			
-			postCategory_API({"center_id" : this.$store.getters.center_id, "category":this.category_add_item.category}).then(response => {
-						this.get_categories_first()
+			var center_id = 1
+			if(this.$store.getters.center_id==0){
+				//console.log("查看管理员默认情况下的中心选择",this.formInline_select_center.center)
+				center_id = this.formInline_select_center.center
+				//管理员没有选择任何中心时候，默认插入信息中心
+				if(center_id==''){
+					center_id=1
+				}
+			}
+			else{
+				center_id  = this.$store.getters.center_id
+			}
+			
+			
+			postCategory_API({"center_id" : center_id, "category":this.category_add_item.category}).then(response => {
+						//this.get_categories_first()
+						console.log("添加分类后更新数据")
+						var center_id = 1
+						if(this.$store.getters.center_id==0){
+							//console.log("查看管理员默认情况下的中心选择",this.formInline_select_center.center)
+							center_id = this.formInline_select_center.center
+							//管理员没有选择任何中心时候，默认插入信息中心
+							if(center_id==''){
+								center_id=1
+							}
+						}
+						else{
+							center_id  = this.$store.getters.center_id
+						}
+						
+						this.listLoading = true
+								  fetchCategory_by_center_API({"center_id":center_id}).then(response => {
+								    this.Tabledata_categories_in_a_center = response.data	
+								    this.listLoading = false })
+						
 						})
 			this.category_add_item = {
 				center_id:'',
@@ -290,7 +379,7 @@
 		del_category_Item(idx){ //与confirm配合
 		  //var idx_table = idx+1
 		  //console.log("进入删除程序")
-			this.$confirm('确认删除此分类信息？')
+			this.$confirm('确认删除此分类信息？此分类下的所有关键字也将被删除！')
 				.then(_ => {
 							  var del_id = {"id":this.Tabledata_categories_in_a_center[idx]["id"]}
 							  console.log("分类删除del_id",del_id)					  
@@ -337,9 +426,30 @@
 			}
 			console.log("修改分类提交",edit_data)
 			
-			editCategory_API(edit_data)
+			editCategory_API(edit_data).then(response => {
+						//this.get_categories_first()
+						console.log("修改分类后更新数据")
+						var center_id = 1
+						if(this.$store.getters.center_id==0){
+							//console.log("查看管理员默认情况下的中心选择",this.formInline_select_center.center)
+							center_id = this.formInline_select_center.center
+							//管理员没有选择任何中心时候，默认插入信息中心
+							if(center_id==''){
+								center_id=1
+							}
+						}
+						else{
+							center_id  = this.$store.getters.center_id
+						}
+						
+						this.listLoading = true
+								  fetchCategory_by_center_API({"center_id":center_id}).then(response => {
+								    this.Tabledata_categories_in_a_center = response.data	
+								    this.listLoading = false })
+						
+						})
 			
-			Vue.set(this.Tabledata_categories_in_a_center, this.category_table_Index, this.category_item);
+			//Vue.set(this.Tabledata_categories_in_a_center, this.category_table_Index, this.category_item);
 		
 			
 		   
@@ -387,6 +497,7 @@
 			    return;
 			}*/
 			
+			console.log("判断左侧是否点击了,this.category_clicked_in_left_table==null",this.category_clicked_in_left_table==null)
 			//this.category_item.center_id = this.formInline_select_center.center
 			this.keyword_add_item.category_id = this.category_clicked_in_left_table
 			this.keyword_add_item.status = 1
@@ -449,9 +560,35 @@
 				"type":this.edit_keyword_Row.type,
 			}
 			console.log("edit_data",edit_data)
-			editKeyword_API(edit_data)
+			editKeyword_API(edit_data).then(response => {
+						//this.get_categories_first()
+						console.log("更改关键字后更新数据。。应该重新获取右表")
+						//console.log("重新获取右表")
+						console.log("分类id",this.category_clicked_in_left_table) //this.keyword_add_item.category_id竟然为null??
+						this.fetch_keywords_by_categoryid(this.category_clicked_in_left_table)
+						})  //this.category_clicked_in_left_table
+						/*
+						var center_id = 1
+						if(this.$store.getters.center_id==0){
+							//console.log("查看管理员默认情况下的中心选择",this.formInline_select_center.center)
+							center_id = this.formInline_select_center.center
+							//管理员没有选择任何中心时候，默认插入信息中心
+							if(center_id==''){
+								center_id=1
+							}
+						}
+						else{
+							center_id  = this.$store.getters.center_id
+						}
+						
+						this.listLoading = true
+								  fetchCategory_by_center_API({"center_id":center_id}).then(response => {
+								    this.Tabledata_categories_in_a_center = response.data	
+								    this.listLoading = false })
+						
+						})*/
 
-			Vue.set(this.Tabledata_keywords_by_categoryid, this.keyword_table_Index, edit_data);		 
+			//Vue.set(this.Tabledata_keywords_by_categoryid, this.keyword_table_Index, edit_data);		 
 
 		},//confirm_keyword
 		
@@ -478,6 +615,14 @@
 			margin-left: 30px;
 		    width: 100%;}
 			
+		.el-row{
+			left:21px
+		}
+			
+		.el-table {
+			left:19px
+		}
+		
 		  .el-table .warning-row {
 		    background: oldlace;
 		  }
