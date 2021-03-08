@@ -243,7 +243,7 @@
 							console.log("this.centers",this.centers)
 							
 							if(this.$store.getters.center_id==0){
-								//console.log("这是管理员")
+								console.log("这是管理员")
 								this.default_Center = "信息技术中心"
 							}
 							else{
