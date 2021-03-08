@@ -5,9 +5,9 @@
 	  <el-container>
 	  <el-header> 
 	  <div class="head">
-		  <el-form :inline="true" :model="formInline_select_center" class="demo-form-inline">	 
-		    <el-form-item label="您所在中心">			  
-			  <el-select v-model="formInline_select_center.center" :placeholder="default_Center"  disabled @change="changeCenter()">
+		  <el-form :inline="true" :model="formInline_select_center" label-width="0px" class="demo-form-inline">	 
+		    <el-form-item >			  
+			  <el-select v-model="formInline_select_center.center" :placeholder="default_Center"  :disabled="select_disable_or_not" @change="changeCenter()">
 			      <el-option
 			        v-for="item in centers"
 			        :key="item.id"
@@ -23,23 +23,29 @@
 	  </el-header>
 	  
 	  <el-container>
-		        
 				<br/>
-				<el-row :gutter="30">
-					<el-col :span="35" ><el-input  v-model="add_item.target" placeholder="请输入要添加的target"></el-input></el-col>
-					<el-col :span="35" ><el-input  v-model="add_item.type" placeholder="请输入要添加的类型"></el-input></el-col>
+				
+				<el-row :gutter="24" class="el-row">
+
+					<el-col :span="120" ><el-input  v-model="add_item.target" placeholder="请输入要添加的target"></el-input></el-col>
+					
+					  <el-radio v-model="add_item.type" label="1">网站</el-radio>
+					  <el-radio v-model="add_item.type" label="2">公众号</el-radio>
 					<!--el-col :span="10"><el-input  v-model="target_item.center_id" placeholder="请输入center_id"></el-input></el-col-->
 					<el-button type="primary" @click="add_Item_Click" class="add-btn" plain>添加Target</el-button>
 				</el-row>
 	   </el-container>
 	    <el-container>
-
+				<br/>
+				<br/>
+				<br/>
 				<el-table
 									     ref="singleTable"
 				 						 :data="Tabledata.filter(data => !search || data.target.toLowerCase().includes(search.toLowerCase()))"
 										 highlight-current-row
 										 
 				 						 style="width: 100%" 
+										 
 							
 										 >
 
@@ -53,13 +59,16 @@
 				 						 <el-table-column
 				 											   prop="target"
 				 											   label="目标"
-				 											    width="350"
+				 											    width="250"
 				 											   >
 				 						 </el-table-column>										 
 				 						 <el-table-column
 				 											   prop="type"
-				 											   label="type"
-				 											   width="100">
+				 											   label="类型"
+				 											   width="250">
+															   <template slot-scope="scope">
+															    <p>{{type_id_to_name(scope.row.type)}}</p>
+															   </template>	
 				 						 </el-table-column>
 
 										 
@@ -104,8 +113,8 @@
 										   <template slot="header" slot-scope="scope">
 										     <el-input
 										       v-model="search"
-										       size="mini"
-										       placeholder="输入关键字搜索"/>
+										       size="large"
+										       placeholder="搜索"/>
 										   </template>
 										 </el-table-column>
 				 					   </el-table>
@@ -115,7 +124,7 @@
 			                <el-form ref="form" :model="edit_item" label-width="80px">
 								<!--edit_item需要初始化有target字段-->
 			                    <el-form-item label="target名"><el-input v-model="edit_item.target"></el-input></el-form-item>
-								<el-form-item label="类型"><el-input v-model="edit_item.type"></el-input></el-form-item>
+								<!--el-form-item label="类型"><el-input v-model="edit_item.type"></el-input></el-form-item-->
 								<el-form-item label="备注"><el-input v-model="edit_item.remark"></el-input></el-form-item>
 			        
 			                </el-form>
@@ -168,6 +177,8 @@
 		  
 		  formInline_select_center: {
 		            center: ''},
+		
+		  select_disable_or_not:this.$store.getters.center_id!=0,
 					
 
 		 Tabledata:null,
@@ -177,6 +188,7 @@
 		  edit_item:{
 			  "target":'',
 		  },
+		  edit_Row:null,
 		  
 		  add_item:{
             "id": '',
@@ -196,10 +208,12 @@
 		//提交API测试，删除API测试，修改API修改  
 	  created() { 
 	
-		  this.get_center_id();
-		  this.get_center_names();
-		  //this.get_IT_center_first();
+		  //this.get_center_id();
+		  this.select_form_init();
 		  this.get_data_first()
+		  //this.get_default();
+		  //this.get_IT_center_first();
+		  
 		  
 	  },
 	  methods: { //方法函数的排列方式, 也按照页面的位置？
@@ -221,15 +235,23 @@
 	    },
 
 		//-------------------------------------created 头-----------------------
-		get_center_id(){
-			console.log("获取centerid",this.$store.getters.center_id)
-		},
 		
-		get_center_names(){
+		select_form_init(){
 				this.listLoading = true
 						  fetchCenter_API().then(response => {
 							this.centers = response.data	
-							this.default_Center = this.centers[this.$store.getters.center_id-1].center
+							console.log("this.centers",this.centers)
+							
+							if(this.$store.getters.center_id==0){
+								//console.log("这是管理员")
+								this.default_Center = "信息技术中心"
+							}
+							else{
+								console.log("获取普通用户的中心")
+								this.default_Center = this.centers[this.$store.getters.center_id-1].center
+							}
+							
+							//this.default_Center = this.centers[this.$store.getters.center_id-1].center
 							this.listLoading = false 
 														
 				})//then
@@ -241,9 +263,39 @@
 						this.listLoading = false})
 			
 		},
-		get_data_first(){
+		get_default(){
 			this.listLoading = true
-					  fetchTarget_by_center_API({"center_id":this.$store.getters.center_id}).then(response => {
+					  fetchTarget_by_center_API({"center_id":1}).then(response => {
+						this.Tabledata = response.data
+						this.listLoading = false})
+			
+		},
+		get_data_first(){
+			console.log("get_data_first刷新表格数据")
+			/********************根据角色确定center_id****************************/
+			var center_id = 1
+			//console.log("查看管理员用户的中心选择formInline_select_center",this.formInline_select_center.center)	
+			if(this.$store.getters.center_id==0){
+				//console.log("查看管理员默认情况下的中心选择",this.formInline_select_center.center)
+				center_id = this.formInline_select_center.center
+				//管理员没有选择任何中心时候，默认插入信息中心
+				if(this.add_item.center_id==''){
+					center_id=1
+				}
+			}
+			else{
+				center_id  = this.$store.getters.center_id
+			}
+			
+			console.log("查看重新获取表格的center_id",center_id )
+			/********************根据角色确定center_id****************************************/  
+			/*
+			var center_id = 1
+			if(this.$store.getters.center_id!=0){
+				center_id = this.$store.getters.center_id
+			}*/
+			this.listLoading = true
+					  fetchTarget_by_center_API({"center_id":center_id}).then(response => {
 						this.Tabledata = response.data
 						this.listLoading = false})
 			
@@ -272,7 +324,7 @@
 		    }
 			if(!this.add_item.type){
 			    this.$message({
-			        message: '请输入类型', //这个warning只能从页面的中间弹出么？
+			        message: '请选择一个类型！网站或公众号。', //这个warning只能从页面的中间弹出么？
 			        type: 'warning'
 			    });
 			    return;
@@ -297,8 +349,26 @@
 					add_flag = false
 				}				
 			}	
-				
-			this.add_item.center_id  = this.$store.getters.center_id
+			
+			/********************根据角色确定center_id****************************/  
+			//console.log("查看管理员用户的中心选择formInline_select_center",this.formInline_select_center.center)	
+			if(this.$store.getters.center_id==0){
+				//console.log("查看管理员默认情况下的中心选择",this.formInline_select_center.center)
+				this.add_item.center_id = this.formInline_select_center.center
+				//管理员没有选择任何中心时候，默认插入信息中心
+				if(this.add_item.center_id==''){
+					this.add_item.center_id=1
+				}
+			}
+			else{
+				this.add_item.center_id  = this.$store.getters.center_id
+			}
+			
+			console.log("查看插入时的center_id",this.add_item.center_id )
+			console.log("查看插入时的center_id",this.add_item.center_id )
+			/********************根据角色确定center_id****************************************/  
+			
+			
 			this.add_item.status = 1
 			//this.add_item.type = 1
 			this.add_item.remark = null
@@ -313,7 +383,32 @@
 										this.dialogVisible_check = true
 									}
 									else{
-										this.get_data_first()
+										console.log("添加后获得新数据")
+										//console.log("准备获新数据时再看center_id",this.add_item.center_id)
+										//这个时候再用this.add_item.center_id竟然为空了!!!!!,没严格顺序执行？？在这个then里把center_id再来一遍
+										/********************根据角色确定center_id****************************/
+										//console.log("查看管理员用户的中心选择formInline_select_center",this.formInline_select_center.center)	
+										if(this.$store.getters.center_id==0){
+											//console.log("查看管理员默认情况下的中心选择",this.formInline_select_center.center)
+											this.add_item.center_id = this.formInline_select_center.center
+											//管理员没有选择任何中心时候，默认插入信息中心
+											if(this.add_item.center_id==''){
+												this.add_item.center_id=1
+											}
+										}
+										else{
+											this.add_item.center_id  = this.$store.getters.center_id
+										}
+										
+										console.log("再看插入时的center_id",this.add_item.center_id )
+										
+										this.listLoading = true
+												  fetchTarget_by_center_API({"center_id":this.add_item.center_id}).then(response => {
+													this.Tabledata = response.data
+													this.listLoading = false})
+										/********************根据角色确定center_id****************************************/  
+										
+										//this.get_data_first()
 									}
 				
 				}) 
@@ -351,10 +446,14 @@
 		},
 		
 		edit_Click(row,idx){
+		   this.edit_Row = row
 		   this.table_Index = idx;
 		   //console.log("center_id调试edit_target_Item,",row.center_id)
 		   //让编辑框有默认显示
-		   this.edit_item = row
+		   this.edit_item = {
+			   center_id:row.center_id,
+			   target:row.target,
+		   }
 		   
 		   this.dialogVisible_table = true;
 			//在此后编辑框会修改target_item的参数
@@ -398,16 +497,45 @@
 			//this.add_item.type = 1
 			//this.add_item.remark = null
 			
+			
+			var edit_data = {
+				"id":this.edit_Row.id,
+				"center_id":this.edit_Row.center_id,
+				"target":this.edit_item.target,
+				"remark":this.edit_item.remark,
+				"type":this.edit_Row.type,
+				"status":this.edit_Row.status
+			}
+			
 			//一系列检查后
 			if (edit_flag==true){
 				console.log("修改后台提交")
-				editTarget_API(this.edit_item).then(response => {
+				editTarget_API(edit_data).then(response => {
 									    if (response.data[0]=="目标已存在"){
 											//console.log("目标已存在")
 											this.dialogVisible_check = true
 										}
 										else{
-											this.get_data_first()
+											//this.get_data_first()
+											var center_id = 1
+											if(this.$store.getters.center_id==0){
+												//console.log("查看管理员默认情况下的中心选择",this.formInline_select_center.center)
+												center_id = this.formInline_select_center.center
+												//管理员没有选择任何中心时候，默认插入信息中心
+												if(center_id==''){
+													center_id=1
+												}
+											}
+											else{
+												center_id  = this.$store.getters.center_id
+											}
+											
+											console.log("再看编辑时的center_id",this.add_item.center_id )
+											
+											this.listLoading = true
+													  fetchTarget_by_center_API({"center_id":center_id}).then(response => {
+														this.Tabledata = response.data
+														this.listLoading = false})
 										}
 					
 					}) 
@@ -430,13 +558,24 @@
 		},//changeStatus
 		
 		changeCenter() {
+			console.log("超级管理员更换中心，进入到changeCenter函数")
+			var center_id = 1
+			if(this.$store.getters.center_id==0){
+				center_id = this.formInline_select_center.center
+			}
+			console.log("更换后的中心id为",center_id)
+			this.listLoading = true
+					  fetchTarget_by_center_API({"center_id":center_id}).then(response => {
+						this.Tabledata = response.data
+						this.listLoading = false})
+		 /*	
 		  this.listLoading = true
 		  		  fetchTarget_by_center_API({"center_id":this.formInline_select_center.center}).then(response => {
 		  			this.Tabledata = response.data
 		  			this.listLoading = false
 		  
 		         console.log("targtes",this.Tabledata)
-		  				  })
+		  				  })*/
 		},//change
 		
         handleClose_target_table(){
@@ -447,14 +586,20 @@
 		     this.dialogVisible_check = false;
 			 this.get_data_first() //！！！！！！!必须加上，如果有错恢复原来的状态
 		},
+		
+		type_id_to_name(type_id){
+			if (type_id==1){return "网站"}
+			else {return "公众号"}
+		}
 				
 		},//methods
 			
+		
 		  
 		}//export default
 				
 				
-				
+	 //		margin-left:1250px;	 left:21px margin-left:1250px;
 				
 </script>
 
@@ -464,13 +609,23 @@
 		    margin-top: 20px;
 			margin-left: 30px;
 		    width: 100%;}
-			
+		
+		.el-row{
+			left:21px
+		}
+		.demo-form-inline{
+			width:205px
+		}
+		.el-table {
+			left:19px
+		}
 		  .el-table .warning-row {
-		    background: oldlace;
+			background: oldlace;
 		  }
 		
 		  .el-table .success-row {
-		    background: #f0f9eb;
+			background: #f0f9eb;
 		  }
+		  
 		
 </style>

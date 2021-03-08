@@ -11,9 +11,14 @@
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
-          <router-link to="/">
+          <router-link to="/article">
             <el-dropdown-item>
               Home
+            </el-dropdown-item>
+          </router-link>
+          <router-link to="/monitor/monitor">
+            <el-dropdown-item>
+              密码修改
             </el-dropdown-item>
           </router-link>
           <el-dropdown-item divided @click.native="logout">
