@@ -1,7 +1,7 @@
 <template>
 	
   <!--div class="app-container" /-->
-  <div class="one-root">
+  <div class="one-root-user">
 	  <el-container>
 	  <el-header> 
 	  <div class="head">
@@ -390,7 +390,7 @@
 
 
 <style>
-		.one-root{
+		.one-root-user{
 		    margin-top: 20px;
 			margin-left: 30px;
 		    width: 100%;}
