@@ -5,8 +5,8 @@
 	  <el-container>
 	  <el-header> 
 	  <div class="head">
-		  <el-form :inline="true" :model="formInline_select_center" class="demo-form-inline">	 
-		    <el-form-item label="中心选择">			  
+		  <el-form :inline="true" :model="formInline_select_center" class="demo-form-inline-user">	 
+		    <el-form-item>			  
 			  <el-select v-model="formInline_select_center.center" placeholder="信息技术中心" @change="changeCenter()">
 			      <el-option
 			        v-for="item in centers"
@@ -25,7 +25,7 @@
 	  <el-container>
 		        
 				<br/>
-				<el-row :gutter="20">
+				<el-row :gutter="20" class="el-row-user">
 					<el-col :span="30"><el-input  v-model="add_item.username" placeholder="请输入要添加的用户名"></el-input></el-col>
 					<!--el-col :span="10"><el-input  v-model="target_item.center_id" placeholder="请输入center_id"></el-input></el-col-->
 					<el-button type="primary" @click="add_Item_Click" class="add-btn" plain>添加用户</el-button>
@@ -36,10 +36,9 @@
 				<el-table
 									     ref="singleTable"
 				 						 :data="Tabledata"
-										 highlight-current-row
-										 
+										 highlight-current-row 
 				 						 style="width: 100%"
-							
+										 class="el-table-user"
 										 >
 
 				 						 <!--el-table-column
@@ -51,7 +50,7 @@
 				 						 <el-table-column
 				 											   prop="username"
 				 											   label="用户名"
-				 											    width="700"
+				 											    width="400"
 				 											   >
 				 						 </el-table-column>										 
 				 						 <!--el-table-column
@@ -68,7 +67,7 @@
 				 												>
 				 						 </el-table-column--> 
 					  
-										<!--el-table-column prop="status" label="状态">
+										<el-table-column prop="status" label="用户启用">
 										  <template slot-scope="scope">
 										    <el-switch
 										      v-model="scope.row.status"
@@ -79,7 +78,7 @@
 										      @change="changeStatus(scope.row)"
 										    />
 										  </template>
-										</el-table-column-->		
+										</el-table-column>		
 										 
 										 
 										 <!--el-table-column prop="remark" label="查询关键字按钮">
@@ -87,16 +86,10 @@
 										         <el-button type="primary"  @click="fetch_keywords_by_targetid_click(scope.row,scope.$index)" circle></el-button>
 										     </template>
 										 </el-table-column-->
-										 <el-table-column prop="remark" label="重置密码">
+
+										 <el-table-column prop="remark" label="重置密码与删除用户">
 										     <template slot-scope="scope">
 										         <el-button type="primary" icon="el-icon-edit" @click="edit_Click(scope.row,scope.$index)" circle></el-button>
-										         
-										     </template>
-										 </el-table-column>
-										 
-										 <el-table-column prop="remark" label="删除用户">
-										     <template slot-scope="scope">
-										         
 										         <el-button type="danger" icon="el-icon-delete" @click="del_Click(scope.$index)" circle></el-button>
 										     </template>
 										 </el-table-column>
@@ -147,9 +140,11 @@
 	
 	import { editTarget_API } from '@/api/monitor'	
 	import { editUser_API } from '@/api/user'
+	import { change_User_Status_API } from '@/api/user'
 
 	import { change_Keyword_Status_API } from '@/api/monitor'
 	import { change_Target_Status_API } from '@/api/monitor'
+	
 	
 	
 	
@@ -354,10 +349,10 @@
 
 		changeStatus(row) {
 		  console.log("changeStatus函数")
-		  console.log("row",row)
+		  console.log("row.id",row.id)
 		  console.log("row.status",row.status)
 		  
-		  change_Target_Status_API(row).then(response => {
+		  change_User_Status_API({"id":row.id,"status":row.status}).then(response => {
 		    console.log(response)
 		  }) 
 		},//changeStatus
@@ -369,7 +364,6 @@
 					console.log("重选center中的tabledata",this.Tabledata)
 					this.get_data_first()
 		  			this.listLoading = false
-		  
 		         //console.log("targtes",this.Tabledata)
 		  				  })
 		},//change
@@ -394,6 +388,18 @@
 		    margin-top: 20px;
 			margin-left: 30px;
 		    width: 100%;}
+			
+		.el-row-user{
+			left:21px
+		}
+		
+		.demo-form-inline-user{
+			width:200px;
+		}
+		
+		.el-table-user {
+			left:19px
+		}
 			
 		  .el-table .warning-row {
 		    background: oldlace;

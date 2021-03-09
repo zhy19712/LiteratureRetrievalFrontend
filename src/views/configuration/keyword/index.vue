@@ -5,7 +5,7 @@
 	  <el-container>
 	  <el-header> 
 	  <div class="head">
-		  <el-form :inline="true" :model="formInline_select_center" class="demo-form-inline">	 
+		  <el-form :inline="true" :model="formInline_select_center" class="demo-form-inline-keyword">	 
 		    <el-form-item >			  
 			  <el-select v-model="formInline_select_center.center" :placeholder="default_Center" :disabled="select_disable_or_not" @change="changeCenter()">
 			      <el-option
@@ -22,13 +22,13 @@
 	  </el-header>
 	  
 	  <el-container>
-		        <!--el-aside width="350px" -->
+		       
 				<br/>
-	  <el-row :gutter="200" class="el-row-keyword">
-		<el-col :span="10">
+	  <el-aside width="410px" class='el-aside-keyword'>
+		  
 						<el-input  v-model="category_add_item.category" placeholder="请输入要添加的分类名称" class="left-input"></el-input>
 					
-					<el-button type="primary" @click="add_category_Item" class="add-btn" plain>添加分类</el-button>
+					<el-button type="primary" @click="add_category_Item" class="add-btn-category" plain>添加分类</el-button>
 				
 				 
 				 <el-table
@@ -48,7 +48,7 @@
 				 											   >
 				 						 </el-table-column>
 
-										 <el-table-column prop="remark" >
+										 <el-table-column prop="remark" width="200">
 											 <template slot="header" slot-scope="scope">
 											   <el-input
 											     v-model="search_1"
@@ -76,13 +76,13 @@
 			        </el-dialog>
 									   
 				<!--/el-aside-->
-				
-			 </el-col>
+			</el-aside>	
+			<main>
 			   <!--el-main-->
-			<el-col :span="14">
+			
 			   
 					<el-input  v-model="keyword_add_item.keyword"  :disabled="left_table_clicked_or_not" placeholder="请输入关键字" class="right-input"></el-input>		
-					<el-button type="primary" @click="add_keyword_Item" class="add-btn" plain >添加关键字</el-button>  <!--style="width: 90%"-->
+					<el-button type="primary" @click="add_keyword_Item" class="add-btn-keyword" plain >添加关键字</el-button>  <!--style="width: 90%"-->
 
 			   <br/>
 	           <el-table 
@@ -109,7 +109,7 @@
 					  </template>
 					</el-table-column>			   
 								   
-	               <el-table-column prop="remark" width="250">
+	               <el-table-column prop="remark" width="200">
 					   <template slot="header" slot-scope="scope">
 					     <el-input
 					       v-model="search_2"
@@ -137,8 +137,7 @@
 			</el-dialog>
 			   
 		<!--/el-main-->				   
-		</el-col>
-		</el-row>
+		</main>
 	  
 	  </el-container>
 	  
@@ -626,15 +625,18 @@
 		.add-btn{
 			width:140px;
 		}
+		.demo-form-inline-keyword{
+			width:210px;
+		}
 			
 		.left-input{
-			width:290px;
+			width:200px;
 			margin-right: 10px;
 			
 		}
 		
 		.right-input{
-			width:530px;
+			width:450px;
 			margin-right: 10px;
 	
 		}
@@ -642,7 +644,18 @@
 		.el-row-keyword{
 			left:21px
 		}
-			
+		
+		.el-aside-keyword{
+			margin-right: 40px;
+			margin-left: 20px;
+		}
+		
+		.add-btn-category{
+			width:190px;
+		}
+		.add-btn-keyword{
+			width:200px;
+		}
 
 		.left_table{
 			margin-top: 10px;
