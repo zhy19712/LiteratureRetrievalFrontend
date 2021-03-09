@@ -22,92 +22,62 @@
 	  </div> <!--head-->
 	  </el-header>
 	  
-	  <el-container>
-				<br/>
-				
-				<el-row :gutter="24" class="el-row-target">
-
-					<el-col :span="120" ><el-input  v-model="add_item.target" placeholder="请输入要爬取的目标"></el-input></el-col>
+	      <el-row>
+				<el-input  v-model="add_item.target" placeholder="请输入要爬取的目标" class="el-input-target"></el-input>
 					
-					  <el-radio v-model="add_item.type" label="1">网站</el-radio>
+					  <el-radio disabled v-model="add_item.type" label="1">网站</el-radio>
 					  <el-radio v-model="add_item.type" label="2">公众号</el-radio>
 					<!--el-col :span="10"><el-input  v-model="target_item.center_id" placeholder="请输入center_id"></el-input></el-col-->
-					<el-button type="primary" @click="add_Item_Click" class="add-btn" plain>添加目标</el-button>
+					<el-button type="primary" @click="add_Item_Click" class="add-btn-target" plain>添加目标</el-button>
 				</el-row>
-	   </el-container>
-	    <el-container>
-				<br/>
-				<br/>
-				<br/>
+	   
+			
 				<el-table
-									     ref="singleTable"
-				 						 :data="Tabledata.filter(data => !search || data.target.toLowerCase().includes(search.toLowerCase()))"
-										 highlight-current-row
-										 
-				 						 style="width: 100%" 
-										 class="el-table_target"
-										 
-							
-										 >
-
-				 						 <!--el-table-column
-										  上面的style="width: 100%" ，没感觉起到任何作用
-				 												prop="id"
-				 												label="id"
-				 												 width="80"
-				 												>
-				 						 </el-table-column--> 										
-				 						 <el-table-column
-				 											   prop="target"
-				 											   label="目标"
-				 											    width="350"
-				 											   >
-				 						 </el-table-column>										 
-				 						 <el-table-column
-				 											   prop="type"
-				 											   label="类型"
-				 											   width="300">
-															   <template slot-scope="scope">
-															    <p>{{type_id_to_name(scope.row.type)}}</p>
-															   </template>	
-				 						 </el-table-column>
-
-										 
-
-					  
-										<el-table-column prop="status" label="是否启用" width="250">
+					 ref="singleTable"
+					 :data="Tabledata.filter(data => !search || data.target.toLowerCase().includes(search.toLowerCase()))"
+					 highlight-current-row
+					 style="width: 100%" 
+					 class="el-table_target"
+										 >										
+					 <el-table-column
+										   prop="target"
+										   label="目标"
+											width="200"
+										   >
+					 </el-table-column>										 
+					 <el-table-column
+										   prop="type"
+										   label="类型"
+										   width="200">
+										   <template slot-scope="scope">
+											<p>{{type_id_to_name(scope.row.type)}}</p>
+										   </template>	
+                      </el-table-column>
+						<el-table-column prop="status" label="是否启用" width="200">
 										  <template slot-scope="scope">
-										    <el-switch
-										      v-model="scope.row.status"
-										      active-color="#13ce66"
-										      inactive-color="#ff4949"
-										      :active-value="1"
-										      :inactive-value="0"
-										      @change="changeStatus(scope.row)"
-										    />
+											<el-switch
+											  v-model="scope.row.status"
+											  active-color="#13ce66"
+											  inactive-color="#ff4949"
+											  :active-value="1"
+											  :inactive-value="0"
+											  @change="changeStatus(scope.row)"
+											/>
 										  </template>
-										</el-table-column>		
+						</el-table-column>		
 										
-				 						 <el-table-column
-											prop="remark"
-											label="备注"
-											 width="200"
-											>
-				 						 </el-table-column> 
-																				  
+						 <el-table-column
+							prop="remark"
+							label="备注"
+							 width="200"
+							>
+						 </el-table-column> 
 
-										 
-										 <!--el-table-column prop="remark" label="查询关键字按钮">
-										     <template slot-scope="scope">
-										         <el-button type="primary"  @click="fetch_keywords_by_targetid_click(scope.row,scope.$index)" circle></el-button>
-										     </template>
-										 </el-table-column-->
-										 
 										 <el-table-column prop="remark" label="操作" width="300">		
 												  <template slot="header" slot-scope="scope">
 												    <el-input
 												      v-model="search"
-												      size="large"
+												      size="medium"
 												      placeholder="搜索"/>
 												  </template>
 										     <template slot-scope="scope">
@@ -145,7 +115,7 @@
 							<p>网站爬取功能优化中，为了保证效果，请联系开发人员制定网站爬取规则</p>
 					    </div>
 					</el-dialog>    
-	  </el-container>
+	  
 	  
 	</el-container>
 	</div>
@@ -518,8 +488,7 @@
 			//this.add_item.status = 1
 			//this.add_item.type = 1
 			//this.add_item.remark = null
-			
-			
+
 			var edit_data = {
 				"id":this.edit_Row.id,
 				"center_id":this.edit_Row.center_id,
@@ -590,14 +559,7 @@
 					  fetchTarget_by_center_API({"center_id":center_id}).then(response => {
 						this.Tabledata = response.data
 						this.listLoading = false})
-		 /*	
-		  this.listLoading = true
-		  		  fetchTarget_by_center_API({"center_id":this.formInline_select_center.center}).then(response => {
-		  			this.Tabledata = response.data
-		  			this.listLoading = false
-		  
-		         console.log("targtes",this.Tabledata)
-		  				  })*/
+
 		},//change
 		
         handleClose_target_table(){
@@ -617,16 +579,10 @@
 			if (type_id==1){return "网站"}
 			else {return "公众号"}
 		}
-				
-		},//methods
 			
-		
-		  
-		}//export default
-				
-				
-	 //		margin-left:1250px;	 left:21px margin-left:1250px;
-				
+		},//methods
+ 
+		}//export default				
 </script>
 
 
@@ -636,15 +592,25 @@
 			margin-left: 30px;
 		    width: 100%;}
 		
-		.el-row-target{
-			left:21px
+		.el-input-target{
+			margin-left: 19px;
+			width:195px;
+			margin-right: 19px;
+			
 		}
-		.demo-form-inline-target{
-			width:205px
+		.add-btn-target{
+			width:200px;
+			
 		}
+		
 		.el-table_target {
 			left:19px
 		}
+		
+		.demo-form-inline-target{
+			width:205px
+		}
+		
 		  .el-table .warning-row {
 			background: oldlace;
 		  }
