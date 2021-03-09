@@ -27,12 +27,12 @@
 				
 				<el-row :gutter="24" class="el-row">
 
-					<el-col :span="120" ><el-input  v-model="add_item.target" placeholder="请输入要添加的target"></el-input></el-col>
+					<el-col :span="120" ><el-input  v-model="add_item.target" placeholder="请输入要爬取的目标"></el-input></el-col>
 					
 					  <el-radio v-model="add_item.type" label="1">网站</el-radio>
 					  <el-radio v-model="add_item.type" label="2">公众号</el-radio>
 					<!--el-col :span="10"><el-input  v-model="target_item.center_id" placeholder="请输入center_id"></el-input></el-col-->
-					<el-button type="primary" @click="add_Item_Click" class="add-btn" plain>添加Target</el-button>
+					<el-button type="primary" @click="add_Item_Click" class="add-btn" plain>添加目标</el-button>
 				</el-row>
 	   </el-container>
 	    <el-container>
@@ -45,6 +45,7 @@
 										 highlight-current-row
 										 
 				 						 style="width: 100%" 
+										 class="el-table_target"
 										 
 							
 										 >
@@ -59,13 +60,13 @@
 				 						 <el-table-column
 				 											   prop="target"
 				 											   label="目标"
-				 											    width="250"
+				 											    width="350"
 				 											   >
 				 						 </el-table-column>										 
 				 						 <el-table-column
 				 											   prop="type"
 				 											   label="类型"
-				 											   width="250">
+				 											   width="300">
 															   <template slot-scope="scope">
 															    <p>{{type_id_to_name(scope.row.type)}}</p>
 															   </template>	
@@ -74,7 +75,7 @@
 										 
 
 					  
-										<el-table-column prop="status" label="状态">
+										<el-table-column prop="status" label="是否启用" width="250">
 										  <template slot-scope="scope">
 										    <el-switch
 										      v-model="scope.row.status"
@@ -102,21 +103,19 @@
 										     </template>
 										 </el-table-column-->
 										 
-										 <el-table-column prop="remark" label="操作">				 
+										 <el-table-column prop="remark" label="操作" width="300">		
+												  <template slot="header" slot-scope="scope">
+												    <el-input
+												      v-model="search"
+												      size="large"
+												      placeholder="搜索"/>
+												  </template>
 										     <template slot-scope="scope">
 										         <el-button type="primary" icon="el-icon-edit" @click="edit_Click(scope.row,scope.$index)" circle></el-button>
 										         <el-button type="danger" icon="el-icon-delete" @click="del_Click(scope.$index)" circle></el-button>
 										     </template>
 										 </el-table-column>
-										 <el-table-column
-										   >
-										   <template slot="header" slot-scope="scope">
-										     <el-input
-										       v-model="search"
-										       size="large"
-										       placeholder="搜索"/>
-										   </template>
-										 </el-table-column>
+								
 				 					   </el-table>
 									   
 			        <el-dialog title="配置修改" :visible.sync="dialogVisible_table" width="30%" :before-close="handleClose_target_table">
@@ -138,9 +137,14 @@
 									 
 				    <el-dialog title="错误" :visible.sync="dialogVisible_check" width="30%" :before-close="handleClose_target_check">
 				        <div>
-				    		<p>配置项不可重复或含有空格，网站类型网址不合规范</p>
+				    		<p>注意爬虫目标不可重复或含有空格，网站类型网址要符合规范，要添加http或https前缀</p>
 				        </div>
 				    </el-dialog>    
+					<el-dialog title="提示" :visible.sync="dialogVisible_check_web_caution" width="30%" :before-close="handleClose_web_caution">
+					    <div>
+							<p>网站爬取功能优化中，为了保证效果，请联系开发人员制定网站爬取规则</p>
+					    </div>
+					</el-dialog>    
 	  </el-container>
 	  
 	</el-container>
@@ -194,12 +198,13 @@
             "id": '',
             "center_id": '',
             "target": '',
-            "type": '',
+            "type": '2',
             "remark": '',
             "status":'',
 		  			},	
 		  dialogVisible_table:false,
           dialogVisible_check:false,
+		  dialogVisible_check_web_caution:false,
 		  table_Index :0,
 
 		  }//data return
@@ -219,7 +224,7 @@
 	  methods: { //方法函数的排列方式, 也按照页面的位置？
 	  
 	    //要不要加 https之类的
-	    isURL(str_url) {// 验证url
+	    isURL_backup(str_url) {// 验证url
 			var strRegex = "^((https|http|ftp|rtsp|mms)?://)"
 			+ "?(([0-9a-z_!~*'().&=+$%-]+: )?[0-9a-z_!~*'().&=+$%-]+@)?" // ftp的user@
 			+ "(([0-9]{1,3}\.){3}[0-9]{1,3}" // IP形式的URL- 199.194.52.184
@@ -233,6 +238,22 @@
 			var re = new RegExp(strRegex);
 			return re.test(str_url);
 	    },
+		
+		isURL(URL) {///(http|https):\/\/([\w.]+\/?)\S*/
+		///^(http[s]{0,1}?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-./?%&=]*)?$/
+		    var str = URL,
+		        Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/,
+		        objExp = new RegExp(Expression);
+		    if(objExp.test(str) == true) {
+				console.log("网址合法")
+		        return true
+		        
+		    } else {
+				console.log("网址不合法")
+		        return false
+		        
+		    }
+		},
 
 		//-------------------------------------created 头-----------------------
 		
@@ -243,7 +264,7 @@
 							console.log("this.centers",this.centers)
 							
 							if(this.$store.getters.center_id==0){
-								//console.log("这是管理员")
+								console.log("这是管理员")
 								this.default_Center = "信息技术中心"
 							}
 							else{
@@ -343,6 +364,7 @@
 				console.log("检查网址是否合法")
 				console.log(this.add_item.target)
 				console.log(this.isURL(this.add_item.target))
+				this.dialogVisible_check_web_caution=true
 				
 				if (this.isURL(this.add_item.target)==false){
 					this.dialogVisible_check = true
@@ -421,7 +443,7 @@
 				"id": '',
 				"center_id": '',
 				"target": '',
-				"type": '',
+				"type": '2',
 				"remark": '',
 				"status":'',
 			}
@@ -587,6 +609,10 @@
 			 this.get_data_first() //！！！！！！!必须加上，如果有错恢复原来的状态
 		},
 		
+		handleClose_web_caution(){
+		     this.dialogVisible_check_web_caution = false;
+			 //this.get_data_first() //！！！！！！!必须加上，如果有错恢复原来的状态
+		},
 		type_id_to_name(type_id){
 			if (type_id==1){return "网站"}
 			else {return "公众号"}
@@ -616,7 +642,7 @@
 		.demo-form-inline{
 			width:205px
 		}
-		.el-table {
+		.el-table_target {
 			left:19px
 		}
 		  .el-table .warning-row {
