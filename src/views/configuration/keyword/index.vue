@@ -1,7 +1,7 @@
 <template>
 	
   <!--div class="app-container" /-->
-  <div class="one-root">
+  <div class="one-root-keyword">
 	  <el-container>
 	  <el-header> 
 	  <div class="head">
@@ -24,7 +24,7 @@
 	  <el-container>
 		        <!--el-aside width="350px" -->
 				<br/>
-	  <el-row :gutter="200">
+	  <el-row :gutter="200" class="el-row-keyword">
 		<el-col :span="10">
 						<el-input  v-model="category_add_item.category" placeholder="请输入要添加的分类名称" class="left-input"></el-input>
 					
@@ -618,7 +618,7 @@
 
 
 <style>
-		.one-root{
+		.one-root-keyword{
 		    margin-top: 20px;
 			margin-left: 30px;
 		    width: 100%;}
@@ -639,7 +639,7 @@
 	
 		}
 		
-		.el-row{
+		.el-row-keyword{
 			left:21px
 		}
 			

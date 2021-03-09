@@ -1,11 +1,11 @@
 <template>
 	
   <!--div class="app-container" /-->
-  <div class="one-root">
+  <div class="one-root-target">
 	  <el-container>
 	  <el-header> 
 	  <div class="head">
-		  <el-form :inline="true" :model="formInline_select_center" label-width="0px" class="demo-form-inline">	 
+		  <el-form :inline="true" :model="formInline_select_center" label-width="0px" class="demo-form-inline-target">	 
 		    <el-form-item >			  
 			  <el-select v-model="formInline_select_center.center" :placeholder="default_Center"  :disabled="select_disable_or_not" @change="changeCenter()">
 			      <el-option
@@ -25,7 +25,7 @@
 	  <el-container>
 				<br/>
 				
-				<el-row :gutter="24" class="el-row">
+				<el-row :gutter="24" class="el-row-target">
 
 					<el-col :span="120" ><el-input  v-model="add_item.target" placeholder="请输入要爬取的目标"></el-input></el-col>
 					
@@ -631,15 +631,15 @@
 
 
 <style>
-		.one-root{
+		.one-root-target{
 		    margin-top: 20px;
 			margin-left: 30px;
 		    width: 100%;}
 		
-		.el-row{
+		.el-row-target{
 			left:21px
 		}
-		.demo-form-inline{
+		.demo-form-inline-target{
 			width:205px
 		}
 		.el-table_target {
