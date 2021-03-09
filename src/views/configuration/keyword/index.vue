@@ -22,29 +22,39 @@
 	  </el-header>
 	  
 	  <el-container>
-		        <el-aside width="350px" >
+		        <!--el-aside width="350px" -->
 				<br/>
-				<el-row :gutter="30">
-					<el-col :span="15"><el-input  v-model="category_add_item.category" placeholder="请输入要添加的分类名称"></el-input></el-col>
+	  <el-row :gutter="200">
+		<el-col :span="10">
+						<el-input  v-model="category_add_item.category" placeholder="请输入要添加的分类名称" class="left-input"></el-input>
+					
 					<el-button type="primary" @click="add_category_Item" class="add-btn" plain>添加分类</el-button>
-				</el-row>
-				 <br/>
+				
+				 
 				 <el-table
 									     ref="singleTable"
-				 						 :data="Tabledata_categories_in_a_center"
+				 						 :data="Tabledata_categories_in_a_center==null?Tabledata_categories_in_a_center:Tabledata_categories_in_a_center.filter(data => !search_1 || data.category.toLowerCase().includes(search_1.toLowerCase()))"
 										 border
 										 highlight-current-row
 										 @current-change="handleCurrentChange"
 				 						 style="width: 100%"
-										 max-height="450">
+										 max-height="450"
+										 class="left_table"
+										 >
 				 						 <el-table-column
 				 											   prop="category"
 				 											   label="分类"
-				 											    width="110"
+				 											    width="200"
 				 											   >
 				 						 </el-table-column>
 
-										 <el-table-column prop="remark" label="操作" >
+										 <el-table-column prop="remark" >
+											 <template slot="header" slot-scope="scope">
+											   <el-input
+											     v-model="search_1"
+											     size="large"
+											     placeholder="搜索"/>
+											 </template>
 										     <template slot-scope="scope">
 										         <el-button type="primary" icon="el-icon-edit" @click="edit_category_Item(scope.row,scope.$index)" circle></el-button>
 										         <el-button type="danger" icon="el-icon-delete" @click="del_category_Item(scope.$index)" circle></el-button>
@@ -65,40 +75,28 @@
 			            </span>
 			        </el-dialog>
 									   
-				</el-aside>
+				<!--/el-aside-->
 				
-			 
-			   <el-main>
-				
-			    <el-row :gutter="40">
-					
-			    	<el-col :span="5"><el-input  v-model="keyword_add_item.keyword"  :disabled="left_table_clicked_or_not" placeholder="请输入关键字"></el-input></el-col>
-			    	<!--el-col :span="10"><el-input  v-model="keyword_item.type"  placeholder="请输入类型"></el-input></el-col-->
-					
+			 </el-col>
+			   <!--el-main-->
+			<el-col :span="14">
+			   
+					<el-input  v-model="keyword_add_item.keyword"  :disabled="left_table_clicked_or_not" placeholder="请输入关键字" class="right-input"></el-input>		
 					<el-button type="primary" @click="add_keyword_Item" class="add-btn" plain >添加关键字</el-button>  <!--style="width: 90%"-->
-					
-			    </el-row>
+
 			   <br/>
-	           <el-table :data="Tabledata_keywords_by_categoryid" border style="width: 90%"  max-height="450">
-	               <el-table-column label="表格序号" width="200"><template slot-scope="scope"> {{scope.$index + 1 }} </template></el-table-column>
-	     		  
-				  <!--el-table-column prop="id" label="ID" width="200"></el-table-column-->
-	     		  <!--el-table-column 
-	     					prop="category_id" 
-	     					label="分类ID" 
-	     					width="200">
-	     		  </el-table-column-->
-				  
+	           <el-table 
+			        ref="singleTable"
+					:data="Tabledata_keywords_by_categoryid==null?Tabledata_keywords_by_categoryid:Tabledata_keywords_by_categoryid.filter(data => !search_2 || data.keyword.toLowerCase().includes(search_2.toLowerCase()))"
+					border 
+					style="width: 100%"  
+					max-height="550"
+					class="right_table">
+	               <el-table-column label="表格序号" width="100"><template slot-scope="scope"> {{scope.$index + 1 }} </template></el-table-column>
+
 	     		  <el-table-column prop="keyword" label="关键字" width="200"></el-table-column>	           
-	               <!--el-table-column prop="type" 
-	     						   label="类型" 
-	     						   width="200">
-	     						   <template slot-scope="scope">
-	     						     {{ scope.row.type == 1 ? '网站' : scope.row.type == 2 ?'公众号': '' }}
-	     						   </template>
-	     						   </el-table-column-->
-								   
-					<el-table-column prop="status" label="状态">
+
+					<el-table-column prop="status" label="状态" width="150">
 					  <template slot-scope="scope">
 					    <el-switch
 					      v-model="scope.row.status"
@@ -111,7 +109,13 @@
 					  </template>
 					</el-table-column>			   
 								   
-	               <el-table-column prop="remark" label="操作">
+	               <el-table-column prop="remark" width="250">
+					   <template slot="header" slot-scope="scope">
+					     <el-input
+					       v-model="search_2"
+					       size="large"
+					       placeholder="搜索"/>
+					   </template>
 	                   <template slot-scope="scope">
 	                       <el-button type="primary" icon="el-icon-edit" @click="edit_keyword_Item(scope.row,scope.$index)" circle></el-button>
 	                       <el-button type="danger" icon="el-icon-delete" @click="del_keyword_Item(scope.$index)" circle></el-button>
@@ -132,9 +136,9 @@
 			    </span>
 			</el-dialog>
 			   
-		</el-main>				   
-				
-
+		<!--/el-main-->				   
+		</el-col>
+		</el-row>
 	  
 	  </el-container>
 	  
@@ -165,6 +169,9 @@
 	  data() { //也可以按照页面位置梳理
 	    return {
 		  //头部	
+		  search_1: '',
+		  search_2: '',
+		  
 		  centers:null,
 		  default_Center:null,
 		  //center_id :1,
@@ -188,6 +195,7 @@
 		  			},
 		  Tabledata_categories_in_a_center:null,
 		  
+		  //category_clicked_in_left_table:1,
 		  category_clicked_in_left_table:null,
 		  
 		  //left_table_clicked_or_not: this.category_clicked_in_left_table==null,
@@ -235,8 +243,8 @@
 				else{
 					return false
 				}
-	        }
-	      
+	        },
+	        
 	    },
 	  
 	  methods: { //方法函数的排列方式, 也按照页面的位置？	
@@ -615,12 +623,32 @@
 			margin-left: 30px;
 		    width: 100%;}
 			
+		.add-btn{
+			width:140px;
+		}
+			
+		.left-input{
+			width:290px;
+			margin-right: 10px;
+			
+		}
+		
+		.right-input{
+			width:530px;
+			margin-right: 10px;
+	
+		}
+		
 		.el-row{
 			left:21px
 		}
 			
-		.el-table {
-			left:19px
+
+		.left_table{
+			margin-top: 10px;
+		}
+		.right_table{
+			margin-top: 10px;
 		}
 		
 		  .el-table .warning-row {
