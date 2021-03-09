@@ -40,9 +40,9 @@ module.exports = {
       [process.env.VUE_APP_BASE_API]:
       {
         //本地主机ip
-        target: 'http://10.67.64.145:8000/api',
+        // target: 'http://10.67.64.145:8000/api',
         //服务器ip
-        // target: 'http://10.188.241.117:8000/api',
+        target: 'http://10.188.241.117:8000/api',
         
         changeOrigin: true,
         pathRewrite: {

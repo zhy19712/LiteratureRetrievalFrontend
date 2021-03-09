@@ -59,7 +59,7 @@
                 <el-input v-model="global_search" placeholder="搜索关键字" clearable maxlength="2000"/>
               </el-col>
 
-              <el-col :span="1" > 
+              <el-col :span="1" :offset="1"> 
                 <el-button icon="el-icon-search" circle @click="globalSearch(search_data,global_search)" style="min-width"></el-button>
               </el-col>
             </el-col>
@@ -72,7 +72,7 @@
             </el-col>
           </el-header>
         <el-container style="height:99%;">
-        <el-aside class="table-aside"  width="402px"  style="max-height=70%; border:1px">
+        <el-aside class="table-aside"  width="420px"  style="max-height=70%; border:1px">
           <el-table :data="tables" 
           highlight-current-row
           @current-change="handleCurrentChange"  
@@ -80,17 +80,17 @@
           border 
           :header-cell-style="{background:'#247CDA', color:'#90E1FF'}"
           style="width:100%; max-height=70%"  >
-            <el-table-column prop='title' label="标题" width="200px" height="40px" style="color">
+            <el-table-column prop='title' label="标题" width="200" height="40px" style="color">
               <template slot-scope="scope">
                  <span class="col-cont" v-html="showData(scope.row.title)"></span>
                </template>
            </el-table-column>
-           <el-table-column prop='time' label="日期" width="100px" height="40px">
+           <el-table-column prop='time' label="日期" width="100" height="40px">
              <template slot-scope="scope">
                 <span class="col-cont" v-html="showData(dateFormat(scope.row.time))"></span>
               </template>
             </el-table-column>
-            <el-table-column prop='target' label="来源" width="100px" height="40px">
+            <el-table-column prop='target' label="来源" width="" height="40px">
               <template slot-scope="scope">
                <span class="col-cont" v-html="showData(scope.row.target)"></span>
              </template>
