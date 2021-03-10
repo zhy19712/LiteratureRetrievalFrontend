@@ -58,3 +58,12 @@ export function editUser_API(data) {
 	  data
 	})
   }
+	
+export function change_User_Status_API(data) {
+	return request({
+	  url: '/admin/userstatus',
+	  method: 'post',
+	  data
+	})
+  }
+ 

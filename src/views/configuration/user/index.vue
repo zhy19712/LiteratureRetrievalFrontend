@@ -26,9 +26,9 @@
 		        
 				<br/>
 				<el-row :gutter="20" class="el-row-user">
-					<el-col :span="30"><el-input  v-model="add_item.username" placeholder="请输入要添加的用户名"></el-input></el-col>
+					<el-col :span="30"><el-input  v-model="add_item.username" placeholder="请输入要添加的用户名" class="el-input-user"></el-input></el-col>
 					<!--el-col :span="10"><el-input  v-model="target_item.center_id" placeholder="请输入center_id"></el-input></el-col-->
-					<el-button type="primary" @click="add_Item_Click" class="add-btn" plain>添加用户</el-button>
+					<el-button type="primary" @click="add_Item_Click" class="add-btn-user" plain>添加用户</el-button>
 				</el-row>
 	   </el-container>
 	    <el-container>
@@ -393,8 +393,19 @@
 			left:21px
 		}
 		
+		
 		.demo-form-inline-user{
+			width:210px;
+			
+		}
+		
+		.el-input-user{
 			width:200px;
+			
+		}
+		.add-btn-user{
+			width:200px;
+			
 		}
 		
 		.el-table-user {

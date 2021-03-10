@@ -48,7 +48,7 @@
 				 											   >
 				 						 </el-table-column>
 
-										 <el-table-column prop="remark" width="200">
+										 <el-table-column prop="remark" width="">
 											 <template slot="header" slot-scope="scope">
 											   <el-input
 											     v-model="search_1"
@@ -109,7 +109,7 @@
 					  </template>
 					</el-table-column>			   
 								   
-	               <el-table-column prop="remark" width="200">
+	               <el-table-column prop="remark" width="">
 					   <template slot="header" slot-scope="scope">
 					     <el-input
 					       v-model="search_2"
@@ -651,7 +651,7 @@
 		}
 		
 		.add-btn-category{
-			width:190px;
+			width:200px;
 		}
 		.add-btn-keyword{
 			width:200px;
